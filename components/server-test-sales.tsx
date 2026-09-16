@@ -1,0 +1,28 @@
+"use client";
+import {useCallback,useEffect,useRef,useState} from 'react';
+import type {MonitoredTicket,TicketPlay} from '@/lib/monitoring';
+import {DashboardReport} from '@/components/dashboard-report';
+export function useServerTestTickets(bank:string){
+ const [tickets,setTickets]=useState<MonitoredTicket[]>([]),[message,setMessage]=useState(''),[ready,setReady]=useState(false),[updated,setUpdated]=useState('');
+ const revision=useRef(0),inflight=useRef(false),alive=useRef(true);
+ const refresh=useCallback(async()=>{if(inflight.current)return;inflight.current=true;const rev=revision.current;
+ try{let next:string|null=null;const list:MonitoredTicket[]=[];
+ for(let page=0;page<40;page++){
+ const query=new URLSearchParams({bank});if(next)query.set('before',next);
+ const r=await fetch('/api/gespro/test-tickets?'+query,{cache:'no-store'});const data=await r.json() as {tickets:MonitoredTicket[];next:string|null;error?:string};if(!r.ok)throw Error(data.error||'Koneksyon pèdi.');list.push(...data.tickets);next=data.next;if(!next)break;
+ }
+ if(next)throw Error('Plis pase 10 000 tikè: rapò konplè a bezwen yon rechèch pa peryòd.');
+ if(alive.current&&revision.current===rev){setTickets(list);setMessage('');setReady(true);setUpdated(new Date().toLocaleTimeString())}
+ }catch(e){if(alive.current){setMessage(e instanceof Error?e.message:'Nou pa ka rafrechi tikè yo.');setReady(false)}}finally{inflight.current=false}},[bank]);
+ useEffect(()=>{alive.current=true;void refresh();const timer=setInterval(()=>{if(!document.hidden)void refresh()},15000);const focus=()=>void refresh();window.addEventListener('focus',focus);return()=>{alive.current=false;clearInterval(timer);window.removeEventListener('focus',focus)}},[refresh]);
+ async function mutate(body:Record<string,unknown>){
+ const r=await fetch('/api/gespro/test-tickets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json() as {ticket:MonitoredTicket;error?:string};if(!r.ok){const error=Object.assign(Error(data.error||'Aksyon an pa konfime.'),{rejected:r.status===400||r.status===403});throw error;}revision.current++;setTickets(old=>[data.ticket,...old.filter(t=>t.id!==data.ticket.id)]);setMessage('');void refresh();return data.ticket;
+ }
+ const create=(posId:string,requestId:string,plays:TicketPlay[])=>mutate({operation:'create',posId,requestId,plays});
+ const cancel=async(id:string)=>{try{await mutate({operation:'cancel',id});return true}catch(e){setMessage(e instanceof Error?e.message:'Anilasyon pa konfime.');return false}};
+ return {tickets,setTickets,refresh,create,cancel,ready,message,updated};
+}
+export function ServerSalesDashboard({bank,canCancel}:{bank:string;canCancel:boolean}){
+ const data=useServerTestTickets(bank);
+ return <section className="access-server-sales"><h2>Lavant tès senkronize</h2><p role="status">{data.message||(!data.ready?'Ap chaje tikè…':`Dènye rafrechisman: ${data.updated} · Chak 15 segonn`)} <button onClick={()=>void data.refresh()}>Rafrechi</button></p><DashboardReport tickets={data.tickets} onCancel={canCancel?data.cancel:()=>false} serverBacked canCancel={canCancel}/></section>
+}

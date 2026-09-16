@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Environment files (contain secrets)
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+.next/
+.wrangler/
+dist/
+out/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Runtime / generated
+.sites-runtime/
+.openai/
+
+# Drizzle
+drizzle/meta/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Lock files (keep one, ignore the other)
+pnpm-lock.yaml
+
+# Large binaries
+public/downloads/*.apk
+android/app/libs/*.aar
