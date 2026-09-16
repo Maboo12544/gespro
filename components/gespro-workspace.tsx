@@ -90,7 +90,7 @@ function SupportWorkspace({ owner, onExit, rates, onSaveRates }: { owner: Owner;
   const [saved,setSaved] = useState(false);
   function updateLimit(game:string,day:string,value:string){setSaved(false);setLimits((items)=>({...items,[`${game}-${day}`]:Math.max(0,Number(value)||0)}))}
   return <>
-    <section className="support-banner"><ShieldCheck /><div><b>{role === "Super Admin" ? "MÒD ASISTANS" : "MÈT BÒLÈT"} — {owner.lottery}</b><span>Dwa aksè reyèl konekte.</span></div><small>Sesyon demonstrasyon</small><Button variant="outline" onClick={onExit}><X /><Localized text={" Sòti nan bank"}/></Button></section>
+    <section className="support-banner"><ShieldCheck /><div><b>{role === "Super Admin" ? "MÒD ASISTANS" : "MÈT BÒLÈT"} — {owner.lottery}</b><span>Dwa aksè reyèl konekte.</span></div><Button variant="outline" onClick={onExit}><X /><Localized text={" Sòti nan bank"}/></Button></section>
     <div className="bank-config-nav"><div role="group" aria-label="Seksyon konfigirasyon"><Button variant={tab==="limits"?"default":"outline"} onClick={()=>setTab("limits")}><Localized text={"Limit jwèt"}/></Button><Button variant={tab==="payouts"?"default":"outline"} onClick={()=>setTab("payouts")}><Localized text={"Peman pa kalite jwèt"}/></Button></div><label>Aperçu wòl<select value={role} onChange={event=>setRole(event.target.value)}><option>Super Admin</option><option><Localized text={"Mèt Bòlèt"}/></option></select></label></div>
     <div hidden={tab!=="limits"}><section className="panel support-workspace">
       <div className="panel-title"><div><p className="eyebrow">KONFIGIRASYON BANK</p><h2>Limit pa kalite jwèt ak pa jou</h2></div><span className="status valide">{owner.status}</span></div>
@@ -324,7 +324,7 @@ export function PosInterface({ setView, tickets, setTickets, lotteryState, ident
     creatingTicket.current=true;
     if(remote){
       const submitted=[...plays];setNotice("Ap sove tikè sou sèvè a…");
-      try{const ticket=await remote.create(submitted.map(({lottery,number,amount,type})=>({lottery,number,amount,type})));setPlays(items=>items.filter(p=>!submitted.some(old=>old.id===p.id)));setNotice("Tikè tès la sove sou sèvè a.");setReceiptToPrint(ticket)}
+      try{const ticket=await remote.create(submitted.map(({lottery,number,amount,type})=>({lottery,number,amount,type})));setPlays(items=>items.filter(p=>!submitted.some(old=>old.id===p.id)));setNotice("Tikè la sove sou sèvè a.");setReceiptToPrint(ticket)}
       catch(error){setNotice(error instanceof Error?error.message:"Tikè a pa konfime. Retrye menm fich la apre koneksyon an retounen.")}
       finally{creatingTicket.current=false}
       return;
@@ -397,7 +397,7 @@ function Workspace(){
   const[tickets,setTickets]=useDemoState<MonitoredTicket[]>("gespro-workspace.tsx:tickets",[]);
   const [lotteryState,setLotteryState]=useDemoState("gespro-workspace.tsx:lotteryState",initialLotteryState);
   useEffect(()=>{setLotteryState(current=>addDominicanCatalog(current))},[setLotteryState]);
-  return <><div hidden={view!=="admin"}><AdminDashboard setView={setView} tickets={tickets} onCancel={id=>{const ticket=tickets.find(t=>t.id===id);const now=Date.now();if(!ticket||!canCancel(ticket,now))return false;setTickets(items=>items.map(t=>t.id===id&&canCancel(t,now)?{...t,status:"cancelled",cancelledAt:now,cancelledBy:"Super Admin (tès)"}:t));return true}} lotteryState={lotteryState} setLotteryState={setLotteryState}/></div><div hidden={view!=="pos"}><PosInterface setView={setView} tickets={tickets} setTickets={setTickets} lotteryState={lotteryState}/></div></>;
+  return <><div hidden={view!=="admin"}><AdminDashboard setView={setView} tickets={tickets} onCancel={id=>{const ticket=tickets.find(t=>t.id===id);const now=Date.now();if(!ticket||!canCancel(ticket,now))return false;setTickets(items=>items.map(t=>t.id===id&&canCancel(t,now)?{...t,status:"cancelled",cancelledAt:now,cancelledBy:"Super Admin"}:t));return true}} lotteryState={lotteryState} setLotteryState={setLotteryState}/></div><div hidden={view!=="pos"}><PosInterface setView={setView} tickets={tickets} setTickets={setTickets} lotteryState={lotteryState}/></div></>;
 }
 
 export default function Home(){return <DemoStorageBoundary><LanguageProvider><StorageNotice/><Workspace/></LanguageProvider></DemoStorageBoundary>}

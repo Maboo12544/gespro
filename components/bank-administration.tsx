@@ -48,7 +48,7 @@ export function BankAdministration({section,banks,data,onChange,tickets,identity
     if((kind==="supervisor"?localSupervisors:points).some(item=>item.name.toLowerCase()===name.trim().toLowerCase())){setMessage("Non sa a deja egziste nan bank la.");return}
     const id=kind+"-"+Date.now()+"-"+(data.points.length+data.supervisors.length);
     onChange(kind==="supervisor"?{...data,supervisors:[...data.supervisors,{id,bank,name:name.trim()}]}:{...data,points:[...data.points,{id,bank,name:name.trim(),supervisorId:null}]});
-    setName("");setMessage("Ajoute nan demonstrasyon bank "+bank+".");
+    setName("");setMessage("Ajoute nan bank "+bank+".");
   }
   function assign(point:Point,checked:boolean) {
     if(!canManage||point.bank!==bank||!localSupervisors.some(item=>item.id===assignTo))return;
@@ -56,7 +56,7 @@ export function BankAdministration({section,banks,data,onChange,tickets,identity
     setMessage("Afektasyon pwen vant yo mete ajou nan sesyon sa a.");
   }
   return <section className="panel bank-admin-panel">
-    <p className="bank-demo">Demonstrasyon • Kont, afektasyon ak lavant yo rete nan sesyon an. Separasyon sa a poko yon kontwòl aksè backend.</p>
+    <p className="bank-demo">Kont, afektasyon ak lavant yo rete nan sesyon an. Separasyon sa a poko yon kontwòl aksè backend.</p>
     <div className="bank-context">
       <label>Aperçu kont<select value={identity} onChange={event=>{setIdentity(event.target.value);setName("");setMessage("");setAssignTo("")}}>
         <option value="super">Super Admin</option>{banks.map(item=><option key={item.lottery} value={"owner:"+item.lottery}>Mèt Bòlèt — {item.lottery}</option>)}{data.supervisors.map(item=><option key={item.id} value={"supervisor:"+item.id}>{item.name} — {item.bank}</option>)}
