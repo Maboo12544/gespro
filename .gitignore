@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# builds
+.next/
+.out/
+dist/
+build/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# misc
+.DS_Store
+*.pem
+.idea/
+.vscode/
+*.tsbuildinfo
+
+# wrangler
+.wrangler/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# sites runtime
+.sites-runtime/
+.openai/
