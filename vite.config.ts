@@ -12,6 +12,7 @@ const { d1, r2 } = hostingConfig;
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
+const isNetlify = Boolean(process.env.NETLIFY);
 
 const localBindingConfig = {
   main: "vinext/server/fetch-handler",
@@ -47,8 +48,16 @@ export default defineConfig(async () => {
   process.env.WRANGLER_REGISTRY_PATH ??= ".wrangler/dev-registry";
   process.env.MINIFLARE_REGISTRY_PATH ??= ".wrangler/registry";
 
-  // Wrangler snapshots its log path while the Cloudflare plugin is imported.
-  const { cloudflare } = await import("@cloudflare/vite-plugin");
+  // Netlify needs Nitro to turn Vinext SSR, route handlers, and server actions
+  // into Netlify runtime output. Keep the existing Cloudflare integration for
+  // the managed preview/runtime used by this project outside Netlify.
+  const platformPlugin = isNetlify
+    ? (await import("nitro/vite")).nitro({ preset: "netlify" })
+    : (await import("@cloudflare/vite-plugin")).cloudflare({
+        viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+        inspectorPort: false,
+        config: localBindingConfig,
+      });
 
   return {
     server: {
@@ -58,11 +67,7 @@ export default defineConfig(async () => {
     plugins: [
       vinext(),
       sites({ mockAuth: !managedLinux }),
-      cloudflare({
-        viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-        inspectorPort: false,
-        config: localBindingConfig,
-      }),
+      platformPlugin,
     ],
   };
 });
