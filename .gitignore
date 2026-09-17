@@ -27,8 +27,8 @@ drizzle/meta/
 .DS_Store
 Thumbs.db
 
-# Lock files (keep one, ignore the other)
-pnpm-lock.yaml
+# pnpm is pinned in package.json; keep pnpm-lock.yaml authoritative.
+package-lock.json
 
 # Large binaries
 public/downloads/*.apk

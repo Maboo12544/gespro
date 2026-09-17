@@ -17,10 +17,12 @@ Whenever reopening or moving a checkout, run `node <plugin-root>/scripts/configu
 
 This starter does not use `wrangler.jsonc`.
 
-`install:ci` runs `npm ci` once against the shared lockfile, disables parent-workspace discovery, and includes required dev/optional dependencies despite production/omit settings. Sharp defaults to prebuilt binaries unless explicitly configured otherwise. Do not overlap installers.
+This repository uses **pnpm 11.25.0**, pinned in `package.json`, with `pnpm-lock.yaml` as its only dependency lockfile. Do not run `npm install` or `npm ci`, or generate a second lockfile. `npm run` remains usable for invoking scripts; it does not install dependencies.
 
-- **Portable:** Preserve host HOME, npm cache, registry, proxy, temporary paths, retry/concurrency settings, and lifecycle-script policy. Use `--prefer-offline --no-audit --no-fund`.
-- **Managed Linux:** Use the existing project-local HOME/cache/tmp setup and Linux install lock, tarball preflight, and timeout. Restore the image-seeded npm cache only when its lockfile hash matches; retain network fallback. Builds keep their existing timeout. These helpers are not invoked by the portable profile.
+`install:ci` runs the Linux pnpm installer with the frozen lockfile. The shell helpers must retain their executable Git modes. For Sites, use the plugin's `install-dependencies.mjs` entrypoint. On standalone hosts with pnpm 11.25.0 available, use `pnpm install --frozen-lockfile`. Do not overlap installers.
+
+- **Portable:** Preserve host registry, proxy, temporary paths and lifecycle-script policy. Use the pinned pnpm version and frozen lockfile.
+- **Managed Linux:** The pnpm helper uses the project install lock, writable pnpm store and timeout. The image seed is optional. Builds keep their existing timeout.
 
 `scripts/sites-env.mjs` preserves the caller's HOME, npm cache, proxy, XDG, and temporary-directory configuration while defaulting Wrangler and Miniflare state to the checkout. If npm reports an unwritable cache, select a writable path with `npm_config_cache` for that install. The `dev` and `start` scripts also keep Wrangler logs inside the checkout. Generated `.sites-runtime/` and `.wrangler/` directories are disposable and ignored by Git.
 
