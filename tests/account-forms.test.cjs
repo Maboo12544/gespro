@@ -5,15 +5,15 @@ const fs=require('node:fs');
 const Module=require('node:module');
 
 function component(file){
- const states=[];
+ const states=[];let cursor=0;
  const jsx=(type,props)=>({type,props});
  const m=new Module(file,module);m.paths=module.paths;
  m.require=id=>id==='react'?{
-  useState(value){const state={value};states.push(state);return [value,next=>{state.value=typeof next==='function'?next(state.value):next}]},
+  useState(value){const index=cursor++;if(!states[index])states[index]={value};const state=states[index];return [state.value,next=>{state.value=typeof next==='function'?next(state.value):next}]},
   useRef:value=>({current:value}),useEffect(){}
  }:id==='react/jsx-runtime'?{jsx,jsxs:jsx}:id.startsWith('@/components/ui/')?{Button:'button',Input:'input'}:require(id);
  m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2020}}).outputText,file);
- return {exports:m.exports,states};
+ return {exports:m.exports,states,render(fn,props){cursor=0;return fn(props)}};
 }
 function find(node,type){
  if(!node||typeof node!=='object')return null;
@@ -34,7 +34,7 @@ test('entity save sends once and distinguishes committed changes from failed lis
  global.fetch=()=>{calls++;return new Promise(resolve=>{release=resolve})};
  try{
   const loaded=component('components/bank-entity-editor.tsx');
-  const tree=loaded.exports.BankEntityEditor({bank:'b',id:'p',kind:'pos',name:'Office',active:true,onSaved:async()=>{throw Error('offline')}});
+  const tree=loaded.render(loaded.exports.BankEntityEditor,{bank:'b',id:'p',kind:'pos',name:'Office',active:true,onSaved:async()=>{throw Error('offline')}});
   const form=find(tree,'form');form.props.onSubmit(event);form.props.onSubmit(event);
   assert.equal(calls,1);
   release(Response.json({ok:true}));await new Promise(resolve=>setImmediate(resolve));
@@ -48,9 +48,9 @@ test('login gateway selects admin before submit and suppresses concurrent submit
  global.fetch=()=>{calls++;return new Promise((_,fail)=>{reject=fail})};
  try{
   const loaded=component('components/gespro-auth-form.tsx');
-  let tree=loaded.exports.GesproAuthForm({});
+  let tree=loaded.render(loaded.exports.GesproAuthForm,{});
   const admin=findButton(tree,'Admin');assert.ok(admin);admin.props.onClick();
-  tree=loaded.exports.GesproAuthForm({});
+  tree=loaded.render(loaded.exports.GesproAuthForm,{});
   const form=find(tree,'form');assert.ok(form);
   const first=form.props.onSubmit(event);await form.props.onSubmit(event);assert.equal(calls,1);
   reject(Error('offline'));await first;
