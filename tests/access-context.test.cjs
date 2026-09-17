@@ -1,7 +1,8 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const ts=require('typescript');const fs=require('node:fs');const Module=require('node:module');
-function load(){const m=new Module('lib/gespro-auth.ts',module);m.paths=module.paths;m.require=(id)=>id==='cloudflare:workers'?{env:{SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test-key'}}:id==='next/headers'?{cookies:async()=>({get:()=>undefined})}:require(id);m._compile(ts.transpileModule(fs.readFileSync('lib/gespro-auth.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,'lib/gespro-auth.ts');return m.exports}
+function compile(file){const m=new Module(file,module);m.paths=module.paths;m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,file);return m.exports}
+function load(){const runtime=compile('lib/runtime-env.ts');const m=new Module('lib/gespro-auth.ts',module);m.paths=module.paths;m.require=(id)=>id==='cloudflare:workers'?{env:{SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'test-key'}}:id==='next/headers'?{cookies:async()=>({get:()=>undefined})}:id==='@/lib/runtime-env'?runtime:require(id);m._compile(ts.transpileModule(fs.readFileSync('lib/gespro-auth.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText,'lib/gespro-auth.ts');return m.exports}
 const auth=load();
 test('server resolves database role, rejects suspended/unassigned identities, and fails closed on lookup error',async()=>{
  const original=global.fetch;const user='test-user';
