@@ -14,6 +14,7 @@ export async function POST(request:Request){
   if(typeof input.operation!=='string'||!allowedOperations.includes(input.operation)||!input.data||typeof input.data!=='object'||Array.isArray(input.data))return Response.json({error:'Demann lan pa valid.'},{status:400,headers});
   const data=input.data as Record<string,unknown>;const bankId=typeof data.bank_id==='string'?data.bank_id:undefined;
   if(input.operation==='create_bank'&&!access.isPlatformAdmin)return Response.json({error:'Se Super Admin sèlman ki ka kreye bank.'},{status:403,headers});
+  if(bankId&&!access.banks.some(b=>b.id===bankId&&b.active))return Response.json({error:'Bank sa a pa aktif.'},{status:403,headers});
   if(!access.isPlatformAdmin&&!access.memberships.some(m=>m.user_id===access.userId&&m.bank_id===bankId&&m.role==='owner'&&m.active))return Response.json({error:'Ou pa gen dwa pou aksyon sa a.'},{status:403,headers});
   const {url,key}=authConfig();const token=(await cookies()).get(sessionCookie)!.value;
   const result=await fetch(`${url}/functions/v1/gespro-access`,{method:'POST',headers:{apikey:key,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:raw,cache:'no-store'});
