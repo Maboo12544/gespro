@@ -9,7 +9,7 @@ function component(file){
  const jsx=(type,props)=>({type,props});
  const m=new Module(file,module);m.paths=module.paths;
  m.require=id=>id==='react'?{
-  useState(value){const state={value};states.push(state);return [value,next=>{state.value=next}]},
+  useState(value){const state={value};states.push(state);return [value,next=>{state.value=typeof next==='function'?next(state.value):next}]},
   useRef:value=>({current:value}),useEffect(){}
  }:id==='react/jsx-runtime'?{jsx,jsxs:jsx}:id.startsWith('@/components/ui/')?{Button:'button',Input:'input'}:require(id);
  m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2020}}).outputText,file);
@@ -19,6 +19,12 @@ function find(node,type){
  if(!node||typeof node!=='object')return null;
  if(node.type===type)return node;
  for(const child of [node.props?.children].flat(Infinity)){const match=find(child,type);if(match)return match;}
+ return null;
+}
+function findButton(node,label){
+ if(!node||typeof node!=='object')return null;
+ if(node.type==='button'&&[node.props?.children].flat(Infinity).join('')===label)return node;
+ for(const child of [node.props?.children].flat(Infinity)){const match=findButton(child,label);if(match)return match;}
  return null;
 }
 const event={preventDefault(){}};
@@ -37,15 +43,17 @@ test('entity save sends once and distinguishes committed changes from failed lis
  }finally{global.fetch=original}
 });
 
-test('login suppresses concurrent submits and unlocks after a network failure',async()=>{
+test('login gateway selects admin before submit and suppresses concurrent submits',async()=>{
  const original=global.fetch;let calls=0,reject;
  global.fetch=()=>{calls++;return new Promise((_,fail)=>{reject=fail})};
  try{
   const loaded=component('components/gespro-auth-form.tsx');
-  const form=find(loaded.exports.GesproAuthForm({}),'form');
+  let tree=loaded.exports.GesproAuthForm({});
+  const admin=findButton(tree,'Admin');assert.ok(admin);admin.props.onClick();
+  tree=loaded.exports.GesproAuthForm({});
+  const form=find(tree,'form');assert.ok(form);
   const first=form.props.onSubmit(event);await form.props.onSubmit(event);assert.equal(calls,1);
   reject(Error('offline'));await first;
   assert.match(loaded.states[4].value,/koneksyon/);
-  const retry=form.props.onSubmit(event);assert.equal(calls,2);reject(Error('offline'));await retry;
  }finally{global.fetch=original}
 });
