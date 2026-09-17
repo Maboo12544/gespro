@@ -16,7 +16,8 @@ export async function POST(request:Request){
   if(input.operation==='create_bank'&&!access.isPlatformAdmin)return Response.json({error:'Se Super Admin sèlman ki ka kreye bank.'},{status:403,headers});
   if(bankId&&!access.banks.some(b=>b.id===bankId&&b.active))return Response.json({error:'Bank sa a pa aktif.'},{status:403,headers});
   if(!access.isPlatformAdmin&&!access.memberships.some(m=>m.user_id===access.userId&&m.bank_id===bankId&&m.role==='owner'&&m.active))return Response.json({error:'Ou pa gen dwa pou aksyon sa a.'},{status:403,headers});
-  const {url,key}=authConfig();const token=(await cookies()).get(sessionCookie)!.value;
+  const token=(await cookies()).get(sessionCookie)?.value;if(!token)return Response.json({error:'Konekte ankò.'},{status:401,headers});
+  const {url,key}=authConfig();
   const result=await fetch(`${url}/functions/v1/gespro-access`,{method:'POST',headers:{apikey:key,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:raw,cache:'no-store'});
   const responseData:unknown=await result.json();
   return Response.json(result.ok?{ok:true}:{error:responseData&&typeof responseData==='object'&&'error' in responseData&&typeof responseData.error==='string'?responseData.error:'Aksyon an refize.'},{status:result.status,headers});
