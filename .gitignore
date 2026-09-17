@@ -10,6 +10,7 @@ node_modules/
 .next/
 .wrangler/
 dist/
+dist-netlify-demo/
 out/
 
 # TypeScript

@@ -1,0 +1,16 @@
+[build]
+  command = "pnpm exec vite build --config demo/netlify/vite.config.ts"
+  publish = "dist-netlify-demo"
+
+[build.environment]
+  NODE_VERSION = "24.19.0"
+  PNPM_VERSION = "11.25.0"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    X-Robots-Tag = "noindex, nofollow"

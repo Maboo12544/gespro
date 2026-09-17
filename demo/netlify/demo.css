@@ -1,0 +1,5 @@
+.netlify-demo-notice{position:relative;z-index:100;background:#0b2948;color:#fff;padding:12px 20px;display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;line-height:1.5;border-bottom:3px solid #0aa7ad}
+.netlify-demo-notice strong{color:#5ee7e4}
+/* The shared cash screen's remote-storage claim does not apply to this demo. */
+.demo-cash-panel>.demo-cash-notice:first-of-type{display:none}
+@media print{body::before{content:'DEMONSTRASYON — SAN LAJAN REYÈL';display:block!important;font-weight:900;text-align:center}.netlify-demo-notice{display:none}}
