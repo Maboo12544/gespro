@@ -53,7 +53,6 @@ export function DemoCash({tickets,banks}:{tickets:MonitoredTicket[];banks:string
       <label><Localized text={"Vandè"}/><select value={selected} onChange={e=>{setSeller(e.target.value);setError("");}}>{sellers.map(s=><option key={s}>{s}</option>)}</select></label>
       <label><Localized text={"Jou"}/><Input type="date" value={date} onChange={e=>{if(e.target.value)setDate(e.target.value);setError("");}}/></label>
     </div>
-    {example&&<p></p>}
     <label className="form-label">Komisyon sou lavant nèt (%)<Input value={ledger.rate} disabled={!!closed} inputMode="decimal" onChange={e=>update({...ledger,rate:e.target.value})}/></label>
     <p>Lavant nèt = lavant brit − tikè anile. Balans = lavant nèt − komisyon − gayan peye − kòb remèt.</p>
     {invalidRate&&<p role="alert" className="demo-cash-error">Komisyon an dwe ant 0 ak 100%.</p>}
