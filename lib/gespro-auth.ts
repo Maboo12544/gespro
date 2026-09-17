@@ -1,10 +1,11 @@
-import { env } from "cloudflare:workers";
 import { cookies } from "next/headers";
 
 export const sessionCookie = "__Host-gespro-session";
 export function authConfig() {
-  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) throw new Error("Auth unavailable");
-  return { url: env.SUPABASE_URL, key: env.SUPABASE_ANON_KEY };
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error("Auth unavailable");
+  return { url, key };
 }
 export function validOrigin(request: Request) {
   return ["https://gespro.lol", "https://www.gespro.lol", "https://gespro.rodchyllesupreme387.chatgpt.site"].includes(request.headers.get("origin") || "");
