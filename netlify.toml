@@ -1,8 +1,10 @@
 [build]
-  command = "pnpm run build"
+  command = "pnpm install --no-frozen-lockfile && pnpm run build"
   publish = "dist/client"
 
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
   NODE_VERSION = "22.13.0"
   COREPACK_INTEGRITY_KEYS = "0"
+  NPM_FLAGS = "--version"
+  PNPM_FLAGS = "--no-frozen-lockfile"
