@@ -1,0 +1,28 @@
+/* Mobile-only fix: when an admin/owner opens a POS, show the POS workspace before the management cards instead of leaving it below the full admin page. Desktop layout is intentionally unchanged. */
+@media (max-width: 760px) {
+  .access-shell:has(> section .access-test-banner) > .access-content {
+    display: none;
+  }
+
+  .access-shell.access-super:has(> section .access-test-banner) > .bank-admin-sidebar {
+    display: none;
+  }
+
+  .access-shell:has(> section .access-test-banner) > section {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .access-shell:has(> section .access-test-banner) > section > .access-test-banner {
+    margin: 0;
+    border-radius: 0;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .access-shell:has(> section .access-test-banner) > section > .pos-shell {
+    width: 100%;
+    min-width: 0;
+  }
+}
