@@ -9,7 +9,7 @@ export function authConfig() {
   return { url, key };
 }
 export function validOrigin(request: Request) {
-  return ["https://gespro.lol", "https://www.gespro.lol", "https://gespro-clean.netlify.app", "https://gespro.rodchyllesupreme387.chatgpt.site"].includes(request.headers.get("origin") || "");
+  return ["https://gespro.lol", "https://www.gespro.lol", "https://gespro-clean.netlify.app", "https://test-desktop-layouts--gespro-clean.netlify.app", "https://gespro.rodchyllesupreme387.chatgpt.site"].includes(request.headers.get("origin") || "");
 }
 export async function accessForToken(token: string): Promise<import("./access-types").AccessContext|null> {
   const {url,key}=authConfig();
