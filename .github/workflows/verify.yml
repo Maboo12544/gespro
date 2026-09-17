@@ -35,7 +35,7 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Account and authentication regression tests
-        run: node --test tests/account-forms.test.cjs tests/access-context.test.cjs tests/access-edge.test.cjs tests/password-route.test.cjs
+        run: node --test tests/account-forms.test.cjs tests/access-context.test.cjs tests/access-edge.test.cjs tests/access-route.test.cjs tests/password-route.test.cjs
       - name: Check application types
         run: pnpm exec tsc --noEmit --incremental false
       - name: Build application
