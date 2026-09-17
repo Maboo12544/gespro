@@ -1,6 +1,19 @@
-import { env } from "cloudflare:workers";
+type SupabaseEnv = {
+  SUPABASE_URL?: string;
+  SUPABASE_ANON_KEY?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
+};
+
+function getEnv(): SupabaseEnv {
+  return {
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  };
+}
 
 export function getSupabaseStatus() {
+  const env = getEnv();
   return {
     configured: Boolean(env.SUPABASE_URL && env.SUPABASE_ANON_KEY),
     urlConfigured: Boolean(env.SUPABASE_URL),
@@ -14,6 +27,7 @@ export async function supabaseRequest<T>(
   init: RequestInit = {},
   options: { accessToken?: string; serviceRole?: boolean } = {},
 ) {
+  const env = getEnv();
   const url = env.SUPABASE_URL;
   const key = options.serviceRole ? env.SUPABASE_SERVICE_ROLE_KEY : env.SUPABASE_ANON_KEY;
   if (!url || !key) throw new Error("SUPABASE_NOT_CONFIGURED");
