@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -14,11 +14,14 @@ export function GesproAuthForm({setup=false}:{setup?:boolean}) {
   const [busy,setBusy]=useState(false);
   const [ready,setReady]=useState(!setup);
   const [space,setSpace]=useState<LoginSpace|null>(setup?"admin":null);
+  const submitting=useRef(false);
   useEffect(()=>{if(setup){const value=new URLSearchParams(window.location.hash.slice(1)).get("token")||"";setToken(value);setReady(true);window.history.replaceState(null,"",window.location.pathname);}},[setup]);
   async function submit(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setError("");
+    event.preventDefault();
+    if(submitting.current)return;
+    setError("");
     if(setup&&password!==confirmation){setError("De modpas yo dwe menm.");return;}
-    setBusy(true);
+    submitting.current=true;setBusy(true);
     try {
       const response=await fetch(`/api/gespro/${setup?"setup":"login"}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(setup?{token,password}:{username,password})});
       const body:unknown=await response.json();
@@ -26,7 +29,7 @@ export function GesproAuthForm({setup=false}:{setup?:boolean}) {
       if(!response.ok){setError(responseError||"Nou pa kapab konekte kounye a.");return;}
       setPassword("");setConfirmation("");setToken("");
       window.location.assign(setup?"/login?activated=1":space==="seller"?"/access":"/");
-    }catch{setError("Verifye koneksyon entènèt ou epi eseye ankò.");}finally{setBusy(false);}
+    }catch{setError("Verifye koneksyon entènèt ou epi eseye ankò.");}finally{submitting.current=false;setBusy(false);}
   }
   const shell={minHeight:"100dvh",display:"grid",placeItems:"center",padding:"24px",background:"radial-gradient(circle at 50% 25%,#edf4fb 0,#dfe9f4 42%,#ccd8e6 100%)",color:"#102a47"} as const;
   if(!setup&&!space)return <main className="gespro-login" style={shell}><section style={{width:"100%",maxWidth:420,display:"grid",gap:34,textAlign:"center"}}><div style={{display:"grid",justifyItems:"center",gap:12}}><img src="/favicon.svg" width="76" height="76" alt=""/><strong style={{fontSize:44,lineHeight:1,color:"#17395f",letterSpacing:"-.04em"}}>GesPro</strong></div><div style={{display:"grid",gap:20}}><button type="button" onClick={()=>setSpace("seller")} style={{minHeight:118,border:0,borderRadius:22,background:"#078fa0",color:"white",fontSize:32,fontWeight:800,boxShadow:"0 15px 28px #087c8c38",cursor:"pointer"}}>Vandè</button><button type="button" onClick={()=>setSpace("admin")} style={{minHeight:118,border:0,borderRadius:22,background:"#0c3158",color:"white",fontSize:32,fontWeight:800,boxShadow:"0 15px 28px #0c31583d",cursor:"pointer"}}>Admin</button></div></section></main>;
