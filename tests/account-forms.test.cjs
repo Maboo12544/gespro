@@ -5,15 +5,15 @@ const fs=require('node:fs');
 const Module=require('node:module');
 
 function component(file){
- const states=[];let cursor=0;
+ const states=[];const refs=[];let cursor=0,refCursor=0;
  const jsx=(type,props)=>({type,props});
  const m=new Module(file,module);m.paths=module.paths;
  m.require=id=>id==='react'?{
   useState(value){const index=cursor++;if(!states[index])states[index]={value};const state=states[index];return [state.value,next=>{state.value=typeof next==='function'?next(state.value):next}]},
-  useRef:value=>({current:value}),useEffect(){}
+  useRef(value){const index=refCursor++;if(!refs[index])refs[index]={current:value};return refs[index]},useEffect(){}
  }:id==='react/jsx-runtime'?{jsx,jsxs:jsx}:id.startsWith('@/components/ui/')?{Button:'button',Input:'input'}:require(id);
  m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2020}}).outputText,file);
- return {exports:m.exports,states,render(fn,props){cursor=0;return fn(props)}};
+ return {exports:m.exports,states,render(fn,props){cursor=0;refCursor=0;return fn(props)}};
 }
 function find(node,type){
  if(!node||typeof node!=='object')return null;
@@ -52,7 +52,9 @@ test('login gateway selects admin before submit and suppresses concurrent submit
   const admin=findButton(tree,'Admin');assert.ok(admin);admin.props.onClick();
   tree=loaded.render(loaded.exports.GesproAuthForm,{});
   const form=find(tree,'form');assert.ok(form);
-  const first=form.props.onSubmit(event);await form.props.onSubmit(event);assert.equal(calls,1);
+  const first=form.props.onSubmit(event);
+  form.props.onSubmit(event);
+  assert.equal(calls,1);
   reject(Error('offline'));await first;
   assert.match(loaded.states[4].value,/koneksyon/);
  }finally{global.fetch=original}
