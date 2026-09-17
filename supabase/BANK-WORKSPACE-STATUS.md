@@ -1,0 +1,9 @@
+# Bank workspace entry
+
+Authenticated `/` now goes to `/access`. The platform administrator starts without an implicitly selected bank. Bank cards show stored owner identities and actual membership/POS counts; suspended banks cannot be entered. Choosing a bank opens its dashboard, ticket reports, POS management, account/role management and lottery configuration. The current bank stays visible; switching clears account/POS form state, closes the POS and remounts bank-scoped configuration/report state. Unsaved lottery changes require confirmation before switching banks. Owner and supervisor access remains scoped by existing server/database permissions. `/demo` preserves the previous local demonstration for platform administrators only.
+
+`gespro_bank_configuration` stores a separate preparation/test configuration per bank UUID. Super administrators and active bank owners can read/write it; sellers and supervisors cannot. The API validates the shape and uses the caller's authenticated token. Database RLS enforces scope even for direct REST access. A trigger stamps actor/time/version and forbids moving a configuration to another bank. The save RPC rejects stale versions. The UI provides explicit save/reload and unsaved-change warnings.
+
+Lottery availability, daily closing times and configured number limits now apply to server test-ticket creation. POS reads its bank catalog every 15 seconds; the database is authoritative. Payout settings are snapshotted but settlement, money, payouts, global results feeds and commissions remain inactive. See ACTIVATED-CONFIGURATION.md for operational semantics. Existing local demonstration settings are not imported or presented as saved server settings.
+
+Validation: TypeScript; existing tests; database transaction tests in `tests/bank-workspace.sql` for owner isolation, platform-admin access, seller denial and stale writes; production build. No end-user credential browser acceptance test performed.

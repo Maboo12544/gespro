@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Environment variables (sensitive)
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+.next/
+.wrangler/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Runtime
+.sites-runtime/
+
+# OpenAI hosting config
+.openai/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Lock files (keep package-lock.json and pnpm-lock.yaml)
+# pnpm-workspace.yaml is kept

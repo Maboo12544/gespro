@@ -1,0 +1,2 @@
+/* Netlify/Vite compatibility shim for the existing @import "tailwindcss" in app/globals.css. */
+@import "./node_modules/tailwindcss/index.css";

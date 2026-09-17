@@ -1,0 +1,6 @@
+[functions.gespro-access]
+verify_jwt = true
+entrypoint = "./functions/gespro-access/index.ts"
+
+[functions.gespro-setup]
+verify_jwt = false

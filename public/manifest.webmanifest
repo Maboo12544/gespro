@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "GesPro",
+  "short_name": "GesPro",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#081d39",
+  "theme_color": "#081d39",
+  "lang": "ht",
+  "icons": [
+    {
+      "src": "/icons/gespro-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/gespro-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
