@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env
+.env.local
+.wrangler/
+.sites-runtime/
+.openai/
+*.tsbuildinfo
+dist/
+build/

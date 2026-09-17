@@ -1,0 +1,58 @@
+begin;
+select set_config('test.admin',gen_random_uuid()::text,true),set_config('test.owner',gen_random_uuid()::text,true),set_config('test.other',gen_random_uuid()::text,true),set_config('test.supervisor',gen_random_uuid()::text,true),set_config('test.seller',gen_random_uuid()::text,true),set_config('test.new',gen_random_uuid()::text,true);
+insert into auth.users(id) values(current_setting('test.admin')::uuid),(current_setting('test.owner')::uuid),(current_setting('test.other')::uuid),(current_setting('test.supervisor')::uuid),(current_setting('test.seller')::uuid),(current_setting('test.new')::uuid);
+insert into public.gespro_profiles(user_id,username) select current_setting('test.'||v)::uuid,'test-'||left(current_setting('test.'||v),20) from unnest(array['admin','owner','other','supervisor','seller']) v;
+insert into public.gespro_platform_admins values(current_setting('test.admin')::uuid);
+select set_config('test.bank',(public.gespro_manage_access(current_setting('test.admin')::uuid,'create_bank','{"name":"Access test A"}') ->> 'id'),true);
+select set_config('test.bank2',(public.gespro_manage_access(current_setting('test.admin')::uuid,'create_bank','{"name":"Access test B"}') ->> 'id'),true);
+insert into public.gespro_memberships(bank_id,user_id,role) values(current_setting('test.bank')::uuid,current_setting('test.owner')::uuid,'owner'),(current_setting('test.bank2')::uuid,current_setting('test.other')::uuid,'owner'),(current_setting('test.bank')::uuid,current_setting('test.supervisor')::uuid,'supervisor'),(current_setting('test.bank')::uuid,current_setting('test.seller')::uuid,'seller');
+select set_config('test.pos',(public.gespro_manage_access(current_setting('test.owner')::uuid,'create_pos',jsonb_build_object('bank_id',current_setting('test.bank'),'name','Assigned test')) ->> 'id'),true);
+select set_config('test.pos2',(public.gespro_manage_access(current_setting('test.owner')::uuid,'create_pos',jsonb_build_object('bank_id',current_setting('test.bank'),'name','Unassigned test')) ->> 'id'),true);
+select set_config('test.foreignpos',(public.gespro_manage_access(current_setting('test.other')::uuid,'create_pos',jsonb_build_object('bank_id',current_setting('test.bank2'),'name','Foreign test')) ->> 'id'),true);
+insert into public.gespro_pos_assignments values(current_setting('test.bank')::uuid,current_setting('test.pos')::uuid,current_setting('test.supervisor')::uuid),(current_setting('test.bank')::uuid,current_setting('test.pos')::uuid,current_setting('test.seller')::uuid);
+select set_config('request.jwt.claim.sub',current_setting('test.owner'),true);
+insert into public.gespro_bank_configuration(bank_id,configuration) values(current_setting('test.bank')::uuid,jsonb_build_object('items',jsonb_build_array(jsonb_build_object('id','fl','name','FLORIDA AM','bank',null)),'removed','{}'::jsonb,'rates','{}'::jsonb,'closingTimes',jsonb_build_object('["fl","Access test A","closing"]',jsonb_build_object('time','23:59','zone','America/New_York')),'limits',jsonb_build_array(jsonb_build_object('lottery','fl','bank','Access test A','scope','bank','game','Directo','number','','days','["5.00","5.00","5.00","5.00","5.00","5.00","5.00"]'::jsonb))));
+set local role authenticated;
+select set_config('request.jwt.claim.sub',current_setting('test.seller'),true);
+select set_config('test.key',gen_random_uuid()::text,true);
+select set_config('test.ticket',(public.gespro_create_test_ticket(current_setting('test.pos')::uuid,current_setting('test.key')::uuid,'[{"lottery":"FLORIDA AM","type":"DIRECTO","number":"00","amount":2.35}]')).id::text,true);
+do $$ declare t public.gespro_test_tickets; begin
+ t=public.gespro_create_test_ticket(current_setting('test.pos')::uuid,current_setting('test.key')::uuid,'[{"lottery":"FLORIDA AM","type":"DIRECTO","number":"00","amount":2.35}]');
+ if t.id::text<>current_setting('test.ticket') or t.amount_cents<>235 or t.plays->0->>'number'<>'00' then raise exception 'retry or money or zero failure';end if;
+ if (select count(*) from public.gespro_test_tickets)<>1 then raise exception 'duplicate';end if;
+ begin perform public.gespro_create_test_ticket(current_setting('test.foreignpos')::uuid,gen_random_uuid(),'[]');raise exception 'foreign allowed';exception when insufficient_privilege then null;end;
+ begin perform public.gespro_create_test_ticket(current_setting('test.pos2')::uuid,gen_random_uuid(),'[]');raise exception 'unassigned allowed';exception when insufficient_privilege then null;end;
+ begin perform public.gespro_create_test_ticket(current_setting('test.pos')::uuid,current_setting('test.key')::uuid,'[{"lottery":"FLORIDA AM","type":"DIRECTO","number":"01","amount":2.35}]');raise exception 'changed payload allowed';exception when raise_exception then if sqlerrm<>'Request already used' then raise;end if;end;
+ begin perform public.gespro_create_test_ticket(current_setting('test.pos')::uuid,gen_random_uuid(),'[{"lottery":"FLORIDA AM","type":"DIRECTO","number":"00","amount":2.351}]');raise exception 'precision allowed';exception when raise_exception then if sqlerrm<>'Invalid amount' then raise;end if;end;
+ if has_table_privilege(current_user,'public.gespro_test_tickets','UPDATE') or has_table_privilege(current_user,'public.gespro_test_tickets','DELETE') or has_table_privilege(current_user,'public.gespro_test_tickets','INSERT') then raise exception 'direct mutation grant';end if;
+end $$;
+select set_config('request.jwt.claim.sub',current_setting('test.supervisor'),true);
+do $$ begin
+ if (select count(*) from public.gespro_test_tickets)<>1 then raise exception 'supervisor read';end if;
+ begin perform public.gespro_cancel_test_ticket(current_setting('test.ticket')::bigint);raise exception 'supervisor cancelled';exception when insufficient_privilege then null;end;
+ begin perform public.gespro_create_test_ticket(current_setting('test.pos')::uuid,gen_random_uuid(),'[]');raise exception 'supervisor created';exception when insufficient_privilege then null;end;
+end $$;
+select set_config('request.jwt.claim.sub',current_setting('test.other'),true);
+do $$ begin if (select count(*) from public.gespro_test_tickets)<>0 then raise exception 'cross-bank exposure';end if;end $$;
+select set_config('request.jwt.claim.sub',current_setting('test.owner'),true);
+do $$ begin if (select count(*) from public.gespro_test_tickets)<>1 then raise exception 'owner report';end if;end $$;
+select set_config('request.jwt.claim.sub',current_setting('test.seller'),true);
+do $$ begin
+ if (public.gespro_cancel_test_ticket(current_setting('test.ticket')::bigint)).status<>'cancelled' then raise exception 'cancel failed';end if;
+ perform public.gespro_cancel_test_ticket(current_setting('test.ticket')::bigint);
+end $$;
+reset role;
+do $$ begin if (select count(*) from public.gespro_test_ticket_audit where ticket_id=current_setting('test.ticket')::bigint)<>2 then raise exception 'duplicate audit';end if;end $$;
+update public.gespro_test_tickets set status='pending',cancel_until=clock_timestamp()-interval '1 second' where id=current_setting('test.ticket')::bigint;
+set local role authenticated;
+do $$ begin begin perform public.gespro_cancel_test_ticket(current_setting('test.ticket')::bigint);raise exception 'expired cancellation allowed';exception when raise_exception then if sqlerrm<>'Cancellation expired' then raise;end if;end;end $$;
+reset role;
+update public.gespro_memberships set active=false where user_id=current_setting('test.seller')::uuid;
+set local role authenticated;
+do $$ begin
+ if (select count(*) from public.gespro_test_tickets)<>0 then raise exception 'suspended read';end if;
+ begin perform public.gespro_create_test_ticket(current_setting('test.pos')::uuid,gen_random_uuid(),'[]');raise exception 'suspended create';exception when insufficient_privilege then null;end;
+end $$;
+reset role;
+select 'PASS: server totals, zero preservation, retry idempotency, changed payload rejection, precision, bank/POS isolation, supervisor read-only, mutation grants, audited cancellation and server deadline, suspension' as result;
+rollback;
