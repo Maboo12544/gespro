@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -10,12 +10,13 @@ export function GesproAuthForm({setup=false}:{setup?:boolean}) {
   const [confirmation,setConfirmation]=useState("");
   const [error,setError]=useState("");
   const [busy,setBusy]=useState(false);
+  const submitting=useRef(false);
   const [ready,setReady]=useState(!setup);
   useEffect(()=>{if(setup){const value=new URLSearchParams(window.location.hash.slice(1)).get("token")||"";setToken(value);setReady(true);window.history.replaceState(null,"",window.location.pathname);}},[setup]);
   async function submit(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setError("");
+    event.preventDefault();if(submitting.current)return;setError("");
     if(setup&&password!==confirmation){setError("De modpas yo dwe menm.");return;}
-    setBusy(true);
+    submitting.current=true;setBusy(true);
     try {
       const response=await fetch(`/api/gespro/${setup?"setup":"login"}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(setup?{token,password}:{username,password})});
       const body:unknown=await response.json();
@@ -23,7 +24,7 @@ export function GesproAuthForm({setup=false}:{setup?:boolean}) {
       if(!response.ok){setError(responseError||"Nou pa kapab konekte kounye a.");return;}
       setPassword("");setConfirmation("");setToken("");
       window.location.assign(setup?"/login?activated=1":"/");
-    }catch{setError("Verifye koneksyon entènèt ou epi eseye ankò.");}finally{setBusy(false);}
+    }catch{setError("Verifye koneksyon entènèt ou epi eseye ankò.");}finally{submitting.current=false;setBusy(false);}
   }
   return <main className="gespro-login" style={{minHeight:"100dvh",display:"grid",placeItems:"center",padding:"24px",background:"#edf5f8",color:"#102a47"}}>
     <section style={{width:"100%",maxWidth:420,background:"white",borderRadius:20,overflow:"hidden",boxShadow:"0 16px 48px #0b294819"}}>

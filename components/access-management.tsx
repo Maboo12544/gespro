@@ -42,6 +42,7 @@ function ScopedTestPos({bank,bankId,pointId,seller,userId}:{bank:string;bankId:s
 export function AccessManagement({initial}:{initial:AccessContext}){
  const [access,setAccess]=useState(initial),[bank,setBank]=useState(initial.isPlatformAdmin?'':initial.banks.find(b=>b.active)?.id??'');
  const [name,setName]=useState(''),[username,setUsername]=useState(''),[password,setPassword]=useState('');
+ const acting=useRef(false);
  const [role,setRole]=useState<AccessRole>('seller'),[posIds,setPosIds]=useState<string[]>([]),[editing,setEditing]=useState(''),[active,setActive]=useState(true);
  const [bankName,setBankName]=useState(''),[pointName,setPointName]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[opened,setOpened]=useState('');
  const [pickerOpen,setPickerOpen]=useState(initial.isPlatformAdmin);
@@ -57,8 +58,14 @@ export function AccessManagement({initial}:{initial:AccessContext}){
  function chooseBank(id:string){if(configDirty&&!window.confirm('Ou gen konfigirasyon ki poko anrejistre. Sòti nan bank la kanmenm?'))return;setConfigDirty(false);setScreen('dashboard');setBank(id);setPickerOpen(!id);setOpened('');clear();setPointName('');setBankName('');setMessage('')}
  function clear(){setEditing('');setName('');setUsername('');setPassword('');setRole('seller');setPosIds([]);setActive(true)}
  async function act(operation:string,data:Record<string,unknown>){
-  if(busy)return;setBusy(true);setMessage('');
-  try{const r=await fetch('/api/gespro/access',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operation,data})});const body=await r.json() as {error?:string};if(!r.ok)throw Error(body.error||'Aksyon an refize.');setPassword('');await refresh();clear();setBankName('');setPointName('');setMessage('Chanjman an anrejistre sou sèvè a.')}catch(e){setMessage(e instanceof Error?e.message:'Aksyon an pa fèt.')}finally{setBusy(false)}
+  if(acting.current)return;acting.current=true;setBusy(true);setMessage('');
+  try{
+   const r=await fetch('/api/gespro/access',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operation,data})});
+   const body=await r.json() as {error?:string};if(!r.ok)throw Error(body.error||'Aksyon an refize.');
+   clear();setBankName('');setPointName('');setMessage('Chanjman an anrejistre sou sèvè a.');
+   try{await refresh()}catch{setMessage('Chanjman an anrejistre sou sèvè a, men lis la pa rafrechi. Rafrechi paj la; pa kreye menm kont lan ankò.');}
+  }catch(e){setMessage(e instanceof Error?e.message:'Aksyon an pa konfime. Rafrechi lis la anvan ou retrye.')}
+  finally{acting.current=false;setBusy(false)}
  }
  return <main className={"access-shell"+(access.isPlatformAdmin?" access-super":"")}><header className="access-header"><div><strong>GesPro</strong><p>Kont ak dwa reyèl</p></div><div><b>{access.displayName||access.username}</b><p>{access.isPlatformAdmin?'Super Admin':membership?roleName[membership.role]:'Kont aktive'}</p></div><form action="/api/gespro/logout" method="post"><Button type="submit" variant="outline">Dekonekte</Button></form></header>
  {access.isPlatformAdmin&&<aside className="bank-admin-sidebar"><div className="bank-sidebar-identity"><Landmark/><strong>{bankItem?.name||'Super Admin'}</strong><small>{bankItem?'Bank aktyèl':'Chwazi yon bank'}</small></div><button onClick={()=>setPickerOpen(true)}><ArrowLeftRight size={18}/>Chanje bank</button><button className={screen==='dashboard'?'active':''} onClick={()=>setScreen('dashboard')}><LayoutDashboard size={18}/>Tablo de bò</button>{bankItem&&<><button onClick={()=>setScreen('points')}><Store size={18}/>Pwen vant</button><button onClick={()=>setScreen('team')}><Users size={18}/>Ekip ak dwa</button><button onClick={()=>setScreen('configuration')}><Settings size={18}/>Konfigirasyon</button></>}</aside>}
