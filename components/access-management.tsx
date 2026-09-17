@@ -16,6 +16,7 @@ import {useServerTestTickets,ServerSalesDashboard} from '@/components/server-tes
 import {addDominicanCatalog} from '@/lib/dominican-lotteries';
 import {initialLotteryState,type LotteryState} from '@/components/lottery-management';
 import type {MonitoredTicket} from '@/lib/monitoring';
+import {SellerDirectAccess} from '@/components/seller-direct-access';
 const roleName={owner:'Admin bank',supervisor:'Sipèvizè',seller:'Vandè'};
 function ScopedTestPos({bank,bankId,pointId,seller,userId}:{bank:string;bankId:string;pointId:string;seller:string;userId:string}){
  const data=useServerTestTickets(bankId);
@@ -40,6 +41,8 @@ function ScopedTestPos({bank,bankId,pointId,seller,userId}:{bank:string;bankId:s
  return <LanguageProvider><div className="access-mode" role="status">{data.message||(!data.ready?'Ap chaje tikè…':`Rafrechisman chak 15 segonn · ${data.updated}`)}{request&&<button disabled={recovering} onClick={()=>void recover()}>Konfime fich ki an atant lan</button>}{recovery&&<p>{recovery}</p>}</div><PosInterface remote={{create,cancel:data.cancel}} identity={{bank,pointId,seller}} posLayout={posLayout} setView={()=>{}} tickets={data.tickets.filter(t=>t.pointOfSaleId===pointId)} setTickets={data.setTickets} lotteryState={lotteries}/></LanguageProvider>
 }
 export function AccessManagement({initial}:{initial:AccessContext}){
+ const sellerOnly=!initial.isPlatformAdmin&&initial.memberships.filter(m=>m.user_id===initial.userId&&m.active).length>0&&initial.memberships.filter(m=>m.user_id===initial.userId&&m.active).every(m=>m.role==='seller');
+ if(sellerOnly)return <SellerDirectAccess initial={initial}/>;
  const initialBank=initial.isPlatformAdmin?'':initial.banks.find(b=>b.active)?.id??'';
  const initialMembership=initial.isPlatformAdmin?undefined:initial.memberships.find(m=>m.user_id===initial.userId&&m.bank_id===initialBank&&m.active);
  const isSeller=initialMembership?.role==='seller';
