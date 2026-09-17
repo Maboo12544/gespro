@@ -51,6 +51,7 @@ export function AccessManagement({initial}:{initial:AccessContext}){
  const [bankName,setBankName]=useState(''),[pointName,setPointName]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[opened,setOpened]=useState(validSellerPos?sellerPosId:'');
  const [pickerOpen,setPickerOpen]=useState(initial.isPlatformAdmin);
  const [screen,setScreen]=useState(isSeller?'points':'dashboard'),[configDirty,setConfigDirty]=useState(false);
+<<<<<<< HEAD
  const autoOpened=useRef(false);
  useEffect(()=>{if(!autoOpened.current&&isSeller&&validSellerPos&&!opened){autoOpened.current=true;setOpened(sellerPosId)}},[isSeller,validSellerPos,sellerPosId,opened]);
  const membership=access.memberships.find(m=>m.user_id===access.userId&&m.bank_id===bank&&m.active);
@@ -58,6 +59,11 @@ export function AccessManagement({initial}:{initial:AccessContext}){
  const currentMembership=access.memberships.find(m=>m.user_id===access.userId&&m.bank_id===bank&&m.active);
  const sellerAssignment=currentMembership?.role==='seller'?access.assignments.find(a=>a.user_id===access.userId&&a.bank_id===bank):undefined;
  const points=access.points.filter(p=>p.bank_id===bank&&p.active&&(!currentMembership||currentMembership.role!=='seller'||p.id===sellerAssignment?.pos_id));
+=======
+ const membership=access.memberships.find(m=>m.user_id===access.userId&&m.bank_id===bank&&m.active);
+ const canManage=access.isPlatformAdmin||membership?.role==='owner';
+ const points=access.points.filter(p=>p.bank_id===bank&&p.active);
+>>>>>>> 655495d04c152457f4a5f8b81ada300d4b352e9b
  const members=access.memberships.filter(m=>m.bank_id===bank);
  const bankItem=access.banks.find(b=>b.id===bank&&b.active);
  async function refresh(){const r=await fetch('/api/gespro/access',{cache:'no-store'});if(r.status===401){window.location.assign('/login');return}if(!r.ok)throw Error('Nou pa ka verifye dwa yo kounye a.');const next=await r.json() as AccessContext;setAccess(next)}
@@ -83,7 +89,11 @@ export function AccessManagement({initial}:{initial:AccessContext}){
  {bankItem&&<section className="bank-context"><div><small>Bank aktyèl</small><h1>{bankItem.name}</h1><p>{members.filter(m=>m.active).length} kont aktif · {points.length} POS aktif</p></div>{access.isPlatformAdmin&&<Button disabled={busy} variant="outline" onClick={()=>setPickerOpen(true)}>Chanje bank</Button>}<nav aria-label="Jesyon bank">{(canManage||membership?.role==='supervisor')&&<button aria-current={screen==='dashboard'?'page':undefined} onClick={()=>setScreen('dashboard')}>Tablo de bò / Tikè / Rapò</button>}<button aria-current={screen==='points'?'page':undefined} onClick={()=>setScreen('points')}>Pwen vant</button>{canManage&&<><button aria-current={screen==='team'?'page':undefined} onClick={()=>setScreen('team')}>Administratè / Sipèvizè / Vandè</button><button aria-current={screen==='configuration'?'page':undefined} onClick={()=>setScreen('configuration')}>Lotri / Limit / Tarif / Orè</button></>}</nav></section>}
 
  {bankItem&&<><section hidden={screen!=="points"&&(canManage||membership?.role==='supervisor')} id="bank-points" className="panel access-panel"><h2>Pwen vant — {bankItem.name}</h2>{canManage&&<form onSubmit={e=>{e.preventDefault();void act('create_pos',{bank_id:bank,name:pointName})}}><label>Non pwen vant<Input required maxLength={120} value={pointName} onChange={e=>setPointName(e.target.value)}/></label><Button disabled={busy} type="submit">Ajoute pwen vant</Button></form>}
+<<<<<<< HEAD
  <div className="access-points">{points.map(p=><article key={p.id}><b>{p.name} · {p.active?'Aktif':'Sispann'}</b>{canManage&&<BankEntityEditor key={p.id+p.name+p.active} bank={bank} id={p.id} kind="pos" name={p.name} active={p.active} onSaved={refresh}/>}<span hidden={!p.active}>{(access.isPlatformAdmin||membership?.role==='owner'||membership?.role==='seller')&&<Button variant="outline" onClick={()=>setOpened(p.id)}>Louvri pwen vant</Button>}</span></article>)}</div>{!points.length&&<p>{membership?.role==='seller'?'Admin bank dwe asiyen w yon pwen vant anvan ou ka vann. Pa gen pwen vant ki afekte ak kont vandè sa a.':'Pa gen pwen vant aktif ki afekte ak kont sa a.'}</p>}{membership?.role==='supervisor'&&<p>Aksè lekti sèlman sou pwen vant ki afekte avè w. Rapò yo montre sèlman POS yo asiyen ou.</p>}</section>
+=======
+ <div className="access-points">{access.points.filter(p=>p.bank_id===bank).map(p=><article key={p.id}><b>{p.name} · {p.active?'Aktif':'Sispann'}</b>{canManage&&<BankEntityEditor key={p.id+p.name+p.active} bank={bank} id={p.id} kind="pos" name={p.name} active={p.active} onSaved={refresh}/>}<span hidden={!p.active}>{(access.isPlatformAdmin||membership?.role==='owner'||membership?.role==='seller')&&<Button variant="outline" onClick={()=>setOpened(p.id)}>Louvri pwen vant</Button>}</span></article>)}</div>{!points.length&&<p>Pa gen pwen vant aktif ki afekte ak kont sa a.</p>}{membership?.role==='supervisor'&&<p>Aksè lekti sèlman sou pwen vant ki afekte avè w. Rapò yo montre sèlman POS yo asiyen ou.</p>}</section>
+>>>>>>> 655495d04c152457f4a5f8b81ada300d4b352e9b
  {(canManage||membership?.role==='supervisor')&&<div hidden={screen!=="dashboard"} id="bank-sales" key={bank}><ServerSalesDashboard bank={bank} canCancel={canManage}/></div>}
  {canManage&&<section hidden={screen!=="team"} id="bank-team" className="panel access-panel"><h2>{editing?'Modifye dwa kont lan':'Kreye kont'}</h2><form onSubmit={e=>{e.preventDefault();void act(editing?'update_member':'create_member',{bank_id:bank,role,pos_ids:posIds,...editing?{user_id:editing,active}:{username,password,display_name:name}})}}>
  {!editing&&<><label>Non konplè<Input required maxLength={120} value={name} onChange={e=>setName(e.target.value)}/></label><label>Non itilizatè<Input required pattern="[a-zA-Z0-9][a-zA-Z0-9._-]{2,31}" autoComplete="off" value={username} onChange={e=>setUsername(e.target.value)}/></label><label>Modpas (12 karaktè minimòm)<Input required minLength={12} maxLength={128} type="password" autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)}/></label></>}

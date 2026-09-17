@@ -53,7 +53,10 @@ export function DemoCash({tickets,banks}:{tickets:MonitoredTicket[];banks:string
       <label><Localized text={"Vandè"}/><select value={selected} onChange={e=>{setSeller(e.target.value);setError("");}}>{sellers.map(s=><option key={s}>{s}</option>)}</select></label>
       <label><Localized text={"Jou"}/><Input type="date" value={date} onChange={e=>{if(e.target.value)setDate(e.target.value);setError("");}}/></label>
     </div>
+<<<<<<< HEAD
     {example&&<p></p>}
+=======
+>>>>>>> 655495d04c152457f4a5f8b81ada300d4b352e9b
     <label className="form-label">Komisyon sou lavant nèt (%)<Input value={ledger.rate} disabled={!!closed} inputMode="decimal" onChange={e=>update({...ledger,rate:e.target.value})}/></label>
     <p>Lavant nèt = lavant brit − tikè anile. Balans = lavant nèt − komisyon − gayan peye − kòb remèt.</p>
     {invalidRate&&<p role="alert" className="demo-cash-error">Komisyon an dwe ant 0 ak 100%.</p>}
@@ -64,4 +67,8 @@ export function DemoCash({tickets,banks}:{tickets:MonitoredTicket[];banks:string
     <div className="demo-cash-actions"><Button variant="outline" onClick={exportReport} disabled={invalidRate}>Telechaje rapò</Button><AlertDialog><AlertDialogTrigger asChild><Button disabled={!!closed||invalidRate}>Fèmen jounen</Button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Fèmen rapò sa a?</AlertDialogTitle><AlertDialogDescription>{bank} — {selected} — {date}. Balans: {money(total.balance)}. Rapò sa a ap konsève kalkil aktyèl la.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel><Localized text={"Retounen"}/></AlertDialogCancel><AlertDialogAction onClick={close}>Konfime fèmti</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog></div>
     <h3>Istorik fèmti</h3><div className="table-scroll"><table><thead><tr><th><Localized text={"Bank"}/></th><th><Localized text={"Vandè"}/></th><th><Localized text={"Jou"}/></th><th><Localized text={"Balans"}/></th></tr></thead><tbody>{closings.filter(c=>c.bank===bank).map(c=><tr key={c.id}><td>{c.bank}</td><td>{c.seller}</td><td>{c.date}</td><td>{money(c.summary.balance)}</td></tr>)}{!closings.some(c=>c.bank===bank)&&<tr><td colSpan={4}>Pa gen fèmti pou bank sa a.</td></tr>}</tbody></table></div>
   </section>;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 655495d04c152457f4a5f8b81ada300d4b352e9b
