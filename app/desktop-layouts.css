@@ -1,5 +1,6 @@
 /* GesPro desktop POS model refinements.
-   Option 1 intentionally remains untouched. Mobile remains untouched. */
+   Option 1 intentionally remains untouched. Mobile remains untouched.
+   Branch-deploy test revision. */
 @media (min-width: 1024px) {
   .play-columns[data-pos-layout="option2"],
   .play-columns[data-pos-layout="option3"] {
