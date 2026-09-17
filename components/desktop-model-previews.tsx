@@ -19,10 +19,10 @@ export const layoutColumns: Record<PosLayout, ColumnConfig[]> = {
     { title: "PICK 5", groups: ["PICK 5"], showTotal: true, icon: "dice" },
   ],
   option2: [
-    { title: "STRAIGHT", groups: ["DIRECTO"], showTotal: false, icon: "gauge" },
-    { title: "PALE", groups: ["PALÉ"], showTotal: false, icon: "users" },
-    { title: "PICK 3", groups: ["CASH 3"], showTotal: false, icon: "dice" },
-    { title: "PICK 4 & 5", groups: ["PLAY 4", "PICK 5"], showTotal: false, icon: "dice" },
+    { title: "STRAIGHT", groups: ["DIRECTO"], showTotal: true, icon: "gauge" },
+    { title: "PALE", groups: ["PALÉ"], showTotal: true, icon: "users" },
+    { title: "PICK 3", groups: ["CASH 3"], showTotal: true, icon: "dice" },
+    { title: "PICK 4 & 5", groups: ["PLAY 4", "PICK 5"], showTotal: true, icon: "dice" },
   ],
   option3: [
     { title: "DIRECTO", groups: ["DIRECTO"], showTotal: true, icon: "gauge" },
