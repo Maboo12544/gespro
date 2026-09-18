@@ -4,9 +4,9 @@ import {createContext,useContext,useEffect,useState} from "react";
 import {languageNames,translate,type Language} from "@/lib/languages";
 import {Dialog,DialogContent,DialogHeader,DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-const Context=createContext({language:"ht" as Language,save:(_language:Language)=>{}});
+const Context=createContext({language:"es" as Language,save:(_language:Language)=>{}});
 export function LanguageProvider({children}:{children:React.ReactNode}){
- const [language,setLanguage]=useState<Language>("ht");
+ const [language,setLanguage]=useState<Language>("es");
  useEffect(()=>{try{const saved=localStorage.getItem("gespro-language-Gespro123");if(saved&&Object.hasOwn(languageNames,saved))setLanguage(saved as Language)}catch{}},[]);
  useEffect(()=>{document.documentElement.lang=language},[language]);
  function save(value:Language){setLanguage(value);try{localStorage.setItem("gespro-language-Gespro123",value)}catch{}}
