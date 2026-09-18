@@ -3,13 +3,13 @@ import {useCallback,useEffect,useRef,useState} from 'react';
 import type {MonitoredTicket,TicketPlay} from '@/lib/monitoring';
 import {DashboardReport} from '@/components/dashboard-report';
 export function useServerTestTickets(bank:string){
- const [tickets,setTickets]=useState<MonitoredTicket[]>([]),[message,setMessage]=useState(''),[ready,setReady]=useState(false),[updated,setUpdated]=useState('');
+ const [tickets,setTickets]=useState<MonitoredTicket[]>([]),[message,setMessage]=useState(''),[ready,setReady]=useState(false),[updated,setUpdated]=useState(''),[serverOffsetMs,setServerOffsetMs]=useState(0);
  const revision=useRef(0),inflight=useRef(false),alive=useRef(true);
  const refresh=useCallback(async()=>{if(inflight.current)return;inflight.current=true;const rev=revision.current;
  try{let next:string|null=null;const list:MonitoredTicket[]=[];
  for(let page=0;page<40;page++){
  const query=new URLSearchParams({bank});if(next)query.set('before',next);
- const r=await fetch('/api/gespro/test-tickets?'+query,{cache:'no-store'});const data=await r.json() as {tickets:MonitoredTicket[];next:string|null;error?:string};if(!r.ok)throw Error(data.error||'Koneksyon pèdi.');list.push(...data.tickets);next=data.next;if(!next)break;
+ const r=await fetch('/api/gespro/test-tickets?'+query,{cache:'no-store'});const data=await r.json() as {tickets:MonitoredTicket[];next:string|null;serverNow?:number;error?:string};if(!r.ok)throw Error(data.error||'Koneksyon pèdi.');list.push(...data.tickets);if(typeof data.serverNow==='number')setServerOffsetMs(data.serverNow-Date.now());next=data.next;if(!next)break;
  }
  if(next)throw Error('Plis pase 10 000 tikè: rapò konplè a bezwen yon rechèch pa peryòd.');
  if(alive.current&&revision.current===rev){setTickets(list);setMessage('');setReady(true);setUpdated(new Date().toLocaleTimeString())}
@@ -20,7 +20,7 @@ export function useServerTestTickets(bank:string){
  }
  const create=(posId:string,requestId:string,plays:TicketPlay[])=>mutate({operation:'create',posId,requestId,plays});
  const cancel=async(id:string)=>{try{await mutate({operation:'cancel',id});return true}catch(e){setMessage(e instanceof Error?e.message:'Anilasyon pa konfime.');return false}};
- return {tickets,setTickets,refresh,create,cancel,ready,message,updated};
+ return {tickets,setTickets,refresh,create,cancel,ready,message,updated,serverOffsetMs};
 }
 export function ServerSalesDashboard({bank,canCancel}:{bank:string;canCancel:boolean}){
  const data=useServerTestTickets(bank);
