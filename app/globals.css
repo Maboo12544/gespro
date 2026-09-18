@@ -465,3 +465,21 @@
  .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:42px}
  .pos-layout-option2 .play-columns{height:calc(100dvh - 254px);min-height:250px}
 }
+
+/* V2 fluid viewport sizing: preserve UI, scale spacing to available desktop height. */
+@media (min-width:1024px){
+ .pos-layout-option2{
+  --v2-top:clamp(46px,6.2dvh,56px);
+  --v2-lottery:clamp(54px,8dvh,70px);
+  --v2-actions:clamp(48px,7dvh,62px);
+  --v2-entry:clamp(100px,14dvh,126px);
+ }
+ .pos-layout-option2 .pos-topbar{height:var(--v2-top);min-height:var(--v2-top)}
+ .pos-layout-option2 .lottery-navigation,.pos-layout-option2 .lottery-strip,.pos-layout-option2 .lottery-strip>button{height:var(--v2-lottery);min-height:var(--v2-lottery)}
+ .pos-layout-option2 .desktop-lottery-actions{height:var(--v2-actions);min-height:var(--v2-actions)}
+ .pos-layout-option2 .ticket-toolbar{height:var(--v2-entry);min-height:var(--v2-entry);overflow:hidden}
+ .pos-layout-option2 .play-columns{
+  height:calc(100dvh - var(--v2-top) - var(--v2-lottery) - var(--v2-actions) - var(--v2-entry));
+  min-height:240px;
+ }
+}
