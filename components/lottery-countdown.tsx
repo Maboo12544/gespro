@@ -11,5 +11,5 @@ export function LotteryCountdown({schedule,serverOffsetMs=0}:{schedule?:ClosingS
  const remaining=schedule?secondsToClose(schedule,now):null;
  const soon=remaining!==null&&remaining>0&&remaining<=600;
  const cutoff=schedule?(()=>{const [h,m]=schedule.time.split(":").map(Number);const total=(h*60+m-8+1440)%1440;return `${String(Math.floor(total/60)).padStart(2,"0")}:${String(total%60).padStart(2,"0")}`})():null;
- return <small className={"lottery-close-time"+(soon||remaining!==null&&remaining<=0?" closing-soon":"")} title={schedule?`${schedule.zone} — vant fèmen 8 minit anvan tiraj`:"Mete lè fèmti nan Admin → Lotri"}>{remaining===null?"Cutoff: —":remaining<=0?`Fèmen · cutoff ${cutoff}`:`Cutoff ${cutoff} · ${String(Math.floor(remaining/60)).padStart(2,"0")}:${String(remaining%60).padStart(2,"0")}`}</small>
+ return <small className={"lottery-close-time"+(soon||remaining!==null&&remaining<=0?" closing-soon":"")} title={schedule?`${schedule.zone} — vant fèmen 8 minit anvan tiraj`:"Mete lè fèmti nan Admin → Lotri"}>{remaining===null?"Closing: —":remaining<=0?`Closed · ${cutoff}`:`Closing ${cutoff} · ${String(Math.floor(remaining/60)).padStart(2,"0")}:${String(remaining%60).padStart(2,"0")}`}</small>
 }
