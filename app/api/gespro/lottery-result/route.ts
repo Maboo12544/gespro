@@ -10,6 +10,7 @@ const games:Record<string,Game>={
  "lottery-7":{pick3:301,pick4:303},
 };
 const pick2:Record<string,number>={"lottery-0":80,"lottery-4":81};
+const massachusetts:Record<string,number>={"lottery-ma-even":213};
 const host="usa-lottery-result-all-state-api.p.rapidapi.com";
 type ApiData={drawDate?:string;drawTime?:string;winningNumbers?:Array<string|number>;gameDetails?:{id?:number;gameName?:string}};
 async function getGame(gameID:number,key:string){
@@ -25,6 +26,13 @@ export async function GET(request:NextRequest){
  const lotteryId=request.nextUrl.searchParams.get("lotteryId")||"",expectedDate=request.nextUrl.searchParams.get("date")||"",key=process.env.RAPIDAPI_LOTTERY_KEY;
  if(!key)return Response.json({error:"RAPIDAPI_LOTTERY_KEY pa konfigire sou sèvè a."},{status:503});
  try{
+  const ma=massachusetts[lotteryId];
+  if(ma){
+   const d=await getGame(ma,key),four=digits(d,4);
+   if(!four)return Response.json({error:"API a pa retounen Massachusetts 4 chif nan fòma ki valab."},{status:502});
+   if(expectedDate&&d.drawDate!==expectedDate)return Response.json({error:`Dènye rezilta API a se ${d.drawDate||"yon lòt dat"}, pa ${expectedDate}.`,latestDate:d.drawDate},{status:409});
+   return Response.json({lotteryId,gameID:ma,gameName:d.gameDetails?.gameName,drawDate:d.drawDate,drawTime:d.drawTime,primary:four,values:[four]});
+  }
   const p2=pick2[lotteryId];
   if(p2){
    const d=await getGame(p2,key),primary=digits(d,2);
