@@ -49,7 +49,7 @@ export function AccessManagement({initial}:{initial:AccessContext}){
  const [role,setRole]=useState<AccessRole>('seller'),[posIds,setPosIds]=useState<string[]>([]),[editing,setEditing]=useState(''),[active,setActive]=useState(true);
  const [bankName,setBankName]=useState(''),[pointName,setPointName]=useState(''),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[opened,setOpened]=useState('');
  const [pickerOpen,setPickerOpen]=useState(initial.isPlatformAdmin);
- const [screen,setScreen]=useState(isSeller?'points':'dashboard'),[configDirty,setConfigDirty]=useState(false);
+ const [screen,setScreen]=useState('dashboard'),[configDirty,setConfigDirty]=useState(false);
  const membership=access.memberships.find(m=>m.user_id===access.userId&&m.bank_id===bank&&m.active);
  const canManage=access.isPlatformAdmin||membership?.role==='owner';
  const currentMembership=access.memberships.find(m=>m.user_id===access.userId&&m.bank_id===bank&&m.active);
