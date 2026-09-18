@@ -455,3 +455,13 @@
  .pos-layout-option2 .ticket-summary{padding-top:2px}
  .pos-layout-option2 .play-columns{height:calc(100dvh - 260px);min-height:240px}
 }
+
+/* V2: remove excess vertical whitespace in the ticket-entry middle area. */
+@media (min-width:1024px){
+ .pos-layout-option2 .ticket-toolbar{padding-top:6px;padding-bottom:5px}
+ .pos-layout-option2 .entry-controls{align-items:center}
+ .pos-layout-option2 .ticket-summary{padding-top:2px;margin:0}
+ .pos-layout-option2 .mobile-entry-add{margin:2px 0!important;min-height:36px!important}
+ .pos-layout-option2 .ticket-toolbar .create-ticket,.pos-layout-option2 .ticket-toolbar button[class*="create"]{margin-top:4px!important;margin-bottom:4px!important}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 275px);max-height:none}
+}
