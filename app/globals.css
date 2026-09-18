@@ -411,3 +411,27 @@
  .pos-layout-option2 .play-card .category-total{margin-top:auto;background:#07345d;color:#fff;min-height:56px;font-size:20px}
  .pos-layout-option2 .empty-plays svg,.pos-layout-option2 .empty-plays strong,.pos-layout-option2 .empty-plays span{visibility:hidden}
 }
+
+/* Fit GesPro V2 into a normal laptop viewport without browser zoom. */
+@media (min-width:1024px){
+ .pos-layout-option2{height:100dvh;min-height:100dvh;overflow:hidden;padding-bottom:0}
+ .pos-layout-option2 .pos-topbar{height:54px;min-height:54px}
+ .pos-layout-option2 .lottery-strip>button{min-height:62px}
+ .pos-layout-option2 .desktop-lottery-actions{padding:7px 20px}
+ .pos-layout-option2 .desktop-lottery-actions button{min-height:42px}
+ .pos-layout-option2 .desktop-lottery-actions:before{min-height:42px}
+ .pos-layout-option2 .ticket-toolbar{padding:10px 22px 8px;margin:0}
+ .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:52px}
+ .pos-layout-option2 .ticket-summary{padding-top:6px}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 330px);min-height:300px;padding:0 18px 10px;margin:0;align-items:stretch}
+ .pos-layout-option2 .play-card{min-height:0;height:100%}
+ .pos-layout-option2 .play-card>header{min-height:44px;height:44px}
+ .pos-layout-option2 .play-card .category-total{min-height:48px}
+}
+@media (min-width:1024px) and (max-height:760px){
+ .pos-layout-option2 .lottery-strip>button{min-height:54px}
+ .pos-layout-option2 .desktop-lottery-actions{padding:5px 18px}
+ .pos-layout-option2 .ticket-toolbar{padding:7px 18px 5px}
+ .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:46px;font-size:25px}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 292px)}
+}
