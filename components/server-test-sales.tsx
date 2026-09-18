@@ -20,7 +20,8 @@ export function useServerTestTickets(bank:string){
  }
  const create=(posId:string,requestId:string,plays:TicketPlay[])=>mutate({operation:'create',posId,requestId,plays});
  const cancel=async(id:string)=>{try{await mutate({operation:'cancel',id});return true}catch(e){setMessage(e instanceof Error?e.message:'Anilasyon pa konfime.');return false}};
- return {tickets,setTickets,refresh,create,cancel,ready,message,updated,serverOffsetMs};
+ const pay=async(id:string)=>mutate({operation:'pay',id});
+ return {tickets,setTickets,refresh,create,cancel,pay,ready,message,updated,serverOffsetMs};
 }
 export function ServerSalesDashboard({bank,canCancel}:{bank:string;canCancel:boolean}){
  const data=useServerTestTickets(bank);
