@@ -435,3 +435,23 @@
  .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:46px;font-size:25px}
  .pos-layout-option2 .play-columns{height:calc(100dvh - 292px)}
 }
+
+/* V2 final laptop fit: keep all four panels and totals inside the visible screen. */
+@media (min-width:1024px){
+ .pos-layout-option2 .ticket-toolbar{min-height:0}
+ .pos-layout-option2 .entry-controls{min-height:0}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 315px);max-height:480px;min-height:260px;overflow:hidden}
+ .pos-layout-option2 .play-card{height:100%;min-height:0}
+ .pos-layout-option2 .play-table{min-height:0;overflow:auto}
+ .pos-layout-option2 .category-total{flex:0 0 46px}
+}
+@media (min-width:1024px) and (max-height:700px){
+ .pos-layout-option2 .pos-topbar{height:48px;min-height:48px}
+ .pos-layout-option2 .lottery-strip>button{min-height:48px}
+ .pos-layout-option2 .desktop-lottery-actions{padding:4px 16px}
+ .pos-layout-option2 .desktop-lottery-actions button,.pos-layout-option2 .desktop-lottery-actions:before{min-height:38px}
+ .pos-layout-option2 .ticket-toolbar{padding:5px 16px 4px}
+ .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:42px;font-size:22px}
+ .pos-layout-option2 .ticket-summary{padding-top:2px}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 260px);min-height:240px}
+}
