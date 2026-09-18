@@ -33,9 +33,9 @@ export const layoutColumns: Record<PosLayout, ColumnConfig[]> = {
 };
 
 const layoutLabels: Record<PosLayout, string> = {
-  option1: "Klasik",
-  option2: "Modèl 2",
-  option3: "Modèl 3",
+  option1: "GesPro V1",
+  option2: "GesPro V2",
+  option3: "GesPro V3",
 };
 
 export function usePosLayout() {
