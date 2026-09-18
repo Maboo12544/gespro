@@ -19,9 +19,9 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const wrap=(value:string,size:number)=>{const max=Math.max(1,Math.floor((W-M*2)/(size*.61)));for(let i=0;i<value.length;i+=max)center(value.slice(i,i+max),size)};
  center(`POST ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,58);center(copy?"** COPY **":"** ORIGINAL **",52);
  const d=new Date(ticket.createdAt),pad=(n:number)=>String(n).padStart(2,"0");
- text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,W/2,48,"middle");y+=60;
+ text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,48,"middle");y+=60;
  text(`Ticket: ${ticket.id}`,M,46);y+=55;
- text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,M,46);y+=65;
+ text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,46);y+=55;
  center(ticket.id,72);
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
@@ -33,7 +33,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
   const plays=ticket.plays.filter(p=>p.lottery===lottery);
   wrap(`${lottery}: ${amount(plays.reduce((sum,p)=>sum+Math.round(p.amount*100),0)/100)}`,54);rule();
   const columns=[M+12,330,600,852];
-  ["N°","MT","N°","MT"].forEach((s,i)=>text(s,columns[i],58));y+=80;
+  ["PLAY","AMOUNT","PLAY","AMOUNT"].forEach((s,i)=>text(s,columns[i],50));y+=80;
   const rows=Math.ceil(plays.length/2);
   // Fill down the left column then down the right, as on the supplied receipt.
   for(let row=0;row<rows;row++){
