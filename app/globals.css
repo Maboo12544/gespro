@@ -381,3 +381,33 @@
 .access-super .access-content,.access-super .access-content label,.access-super .access-content p,.access-super .access-content span,.access-super .access-content button,.access-super .access-content th,.access-super .access-content td,.access-super .access-content summary{font-weight:700}
 .admin-save-button{background:#078c9f!important;color:#fff!important;border-color:#078c9f!important;font-weight:800!important;min-width:120px}
 .admin-save-button:disabled{opacity:.55}
+
+/* GesPro V2 — desktop layout based on the approved 4-column reference. V1/mobile stay unchanged. */
+@media (min-width:1024px){
+ .pos-layout-option2{background:#f7f9fb}
+ .pos-layout-option2 .pos-topbar{min-height:62px;background:#07345d;color:#fff;border-bottom:2px solid #1c78bd}
+ .pos-layout-option2 .pos-topbar .brand strong,.pos-layout-option2 .pos-topbar .brand small,.pos-layout-option2 .pos-layout-label{color:#fff}
+ .pos-layout-option2 .lottery-navigation{background:#0873bd;padding:0}
+ .pos-layout-option2 .lottery-strip{gap:0}
+ .pos-layout-option2 .lottery-strip>button{min-width:235px;border-radius:0;border:0;border-right:1px solid #ffffff55;min-height:74px}
+ .pos-layout-option2 .desktop-lottery-actions{display:flex;background:#0873bd;padding:10px 24px;justify-content:center;gap:12px;border-top:1px solid #ffffff55}
+ .pos-layout-option2 .desktop-lottery-actions:before{content:"CREATE TICKET";display:grid;place-items:center;min-width:190px;border:2px solid #fff;border-radius:7px;color:#fff;font-weight:800}
+ .pos-layout-option2 .desktop-lottery-actions button{width:92px;min-height:48px;border:2px solid #fff;border-radius:7px;color:#fff;background:transparent}
+ .pos-layout-option2 .ticket-toolbar{display:grid;grid-template-columns:1fr;gap:0;padding:16px 24px 12px;background:#fff}
+ .pos-layout-option2 .balance-panel{display:none}
+ .pos-layout-option2 .entry-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:36px;align-items:end}
+ .pos-layout-option2 .entry-controls>.toggles{position:absolute;top:145px;left:70px;z-index:3;color:#fff}
+ .pos-layout-option2 .entry-controls input{height:58px;font-size:30px;text-align:center;border-radius:0}
+ .pos-layout-option2 .mobile-game-kind{display:grid;height:58px;place-items:center;font-size:30px;background:#eef0f3;color:#17395f}
+ .pos-layout-option2 .ticket-summary{justify-content:center;gap:60px;padding:12px 0 0}
+ .pos-layout-option2 .ticket-summary>div{gap:80px;font-size:22px}
+ .pos-layout-option2 .ticket-summary strong{font-size:38px}
+ .pos-layout-option2 .play-columns{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:0 22px 22px}
+ .pos-layout-option2 .play-card{min-height:435px;border-radius:8px;border:1px solid #b7c7d6;overflow:hidden;background:#fff}
+ .pos-layout-option2 .play-card>header{background:linear-gradient(#1684d3,#0068b8);color:#fff;min-height:50px;justify-content:center}
+ .pos-layout-option2 .play-card>header>span,.pos-layout-option2 .play-card>header>b{display:none}
+ .pos-layout-option2 .play-card>header h2{font-size:24px;font-weight:700}
+ .pos-layout-option2 .play-head{background:#086fbd;color:#fff}
+ .pos-layout-option2 .play-card .category-total{margin-top:auto;background:#07345d;color:#fff;min-height:56px;font-size:20px}
+ .pos-layout-option2 .empty-plays svg,.pos-layout-option2 .empty-plays strong,.pos-layout-option2 .empty-plays span{visibility:hidden}
+}
