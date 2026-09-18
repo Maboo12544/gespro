@@ -304,7 +304,7 @@ export function PosInterface({ setView, tickets, setTickets, lotteryState, ident
     numberRef.current?.focus();
   }
   async function focusAmount() {
-    try { const parsed=parsePlayEntry(number);setNotice("");if(!multiples&&saleLotteries.length===1&&parsed.length===1){const p=parsed[0];void fetch(`/api/gespro/available-limit?posId=${encodeURIComponent(posId)}&lottery=${encodeURIComponent(saleLotteries[0])}&number=${encodeURIComponent(p.number)}&type=${encodeURIComponent(p.type)}`,{cache:"no-store"}).then(r=>r.json()).then((v:{available?:number|null})=>setAvailableLimit(typeof v.available==="number"?v.available:null)).catch(()=>setAvailableLimit(null))}else setAvailableLimit(null);amountRef.current?.focus(); amountRef.current?.select(); }
+    try { const parsed=parsePlayEntry(number);setNotice("");if(!multiples&&saleLotteries.length===1&&parsed.length===1){const p=parsed[0];void fetch(`/api/gespro/available-limit?posId=${encodeURIComponent(posId)}&lottery=${encodeURIComponent(saleLotteries[0])}&number=${encodeURIComponent(p.number)}&type=${encodeURIComponent(p.type)}`,{cache:"no-store"}).then(async r=>await r.json() as {available?:number|null}).then(v=>setAvailableLimit(typeof v.available==="number"?v.available:null)).catch(()=>setAvailableLimit(null))}else setAvailableLimit(null);amountRef.current?.focus(); amountRef.current?.select(); }
     catch (error) { setNotice(error instanceof Error ? error.message : "Fòma boul la pa valab."); }
   }
   function addPlay(amountOverride=amount) {
