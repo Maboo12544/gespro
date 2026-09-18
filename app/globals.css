@@ -465,3 +465,22 @@
  .pos-layout-option2 .ticket-toolbar .create-ticket,.pos-layout-option2 .ticket-toolbar button[class*="create"]{margin-top:4px!important;margin-bottom:4px!important}
  .pos-layout-option2 .play-columns{height:calc(100dvh - 275px);max-height:none}
 }
+
+/* V2 reference-match pass: compact top controls, maximize the four result columns. */
+@media (min-width:1024px){
+ .pos-layout-option2 .pos-topbar{height:50px;min-height:50px}
+ .pos-layout-option2 .lottery-navigation{height:64px}
+ .pos-layout-option2 .lottery-strip{height:64px;padding:0}
+ .pos-layout-option2 .lottery-strip>button{height:64px;min-height:64px}
+ .pos-layout-option2 .desktop-lottery-actions{height:58px;box-sizing:border-box;padding:5px 22px}
+ .pos-layout-option2 .ticket-toolbar{display:grid;grid-template-rows:auto auto;box-sizing:border-box;padding:8px 22px 6px}
+ .pos-layout-option2 .entry-controls{grid-template-columns:1fr 1fr 1fr;gap:28px}
+ .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:48px}
+ .pos-layout-option2 .ticket-summary{min-height:42px;padding:3px 0}
+ .pos-layout-option2 .ticket-summary>div{gap:70px}
+ .pos-layout-option2 .mobile-entry-add{display:none!important}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 270px);min-height:300px;gap:12px;padding:0 18px 8px}
+ .pos-layout-option2 .play-card>header{height:46px;min-height:46px}
+ .pos-layout-option2 .play-head{padding:.45rem .55rem}
+ .pos-layout-option2 .category-total{min-height:46px!important;height:46px}
+}
