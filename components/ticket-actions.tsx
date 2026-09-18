@@ -10,13 +10,11 @@ import {TicketPrintout} from "@/components/monitoring";
 
 export function TicketActions({tickets,bank,onCancel,onError,serverBacked=false}:{serverBacked?:boolean;tickets:MonitoredTicket[];bank:string;onCancel:(id:string)=>boolean|Promise<boolean>;onError:(message:string)=>void}){
   const [selected,setSelected]=useState("");
-  const [quickCode,setQuickCode]=useState("");
   const [confirm,setConfirm]=useState(false);
   const [now,setNow]=useState(Date.now());
   const [printing,setPrinting]=useState<MonitoredTicket[]>([]);
   const rows=tickets.filter(t=>t.bank===bank).sort((a,b)=>b.createdAt-a.createdAt);
-  const matches=quickCode.length===4?rows.filter(t=>t.id.replace(/\\D/g,"").slice(-4)===quickCode):[];
-  const ticket=rows.find(t=>t.id===selected)??(matches.length===1?matches[0]:rows[0]);
+  const ticket=rows.find(t=>t.id===selected)??rows[0];
   useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer)},[]);
   useEffect(()=>{
     if(!printing.length)return;
@@ -32,7 +30,6 @@ export function TicketActions({tickets,bank,onCancel,onError,serverBacked=false}
     setConfirm(false);
   }
   return <>
-    <div className="ticket-quick-search"><input aria-label="4 dènye chif fich la" inputMode="numeric" pattern="[0-9]*" maxLength={4} placeholder="4 dènye chif" value={quickCode} onChange={e=>{const v=e.target.value.replace(/\\D/g,"").slice(0,4);setQuickCode(v);if(v.length===4){const found=rows.filter(t=>t.id.replace(/\\D/g,"").slice(-4)===v);if(found.length===1){setSelected(found[0].id);onError("")}else if(found.length>1)onError("Plizyè fich fini ak 4 chif sa yo. Chwazi bon fich la nan lis la.");else onError("Pa jwenn fich ak 4 dènye chif sa yo.")}}}/>{matches.length>1&&<select aria-label="Fich ki matche" value={selected} onChange={e=>setSelected(e.target.value)}><option value="">Chwazi fich la</option>{matches.map(t=><option key={t.id} value={t.id}>{t.id+" — $"+t.amount.toFixed(2)+" — "+new Date(t.createdAt).toLocaleTimeString()}</option>)}</select>}</div>
     <div className="bank-ticket-actions">
       <select aria-label="Fich bank lan" value={ticket?.id??""} disabled={!rows.length} onChange={e=>{setSelected(e.target.value);onError("")}}>
         {!rows.length&&<option value=""><Localized text={"Pa gen fich ankò"}/></option>}
