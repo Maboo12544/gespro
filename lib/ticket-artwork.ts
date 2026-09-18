@@ -17,12 +17,12 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const rule=()=>{parts.push(`<path d="M ${M} ${y} H ${W-M} M ${M} ${y+7} H ${W-M}" fill="none" stroke="#111" stroke-width="3" stroke-dasharray="16 3"/>`);y+=64};
  // Keep names and identifiers real; never copy the sample receipt's serial or payouts.
  const wrap=(value:string,size:number)=>{const max=Math.max(1,Math.floor((W-M*2)/(size*.61)));for(let i=0;i<value.length;i+=max)center(value.slice(i,i+max),size)};
- wrap(ticket.bank||"GesPro",52);center(`AJAN ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,40);center(copy?"** COPY **":"** ORIGINAL **",44);
+ center(`POST ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,58);center(copy?"** COPY **":"** ORIGINAL **",52);
  const d=new Date(ticket.createdAt),pad=(n:number)=>String(n).padStart(2,"0");
- text(`TICKET: ${ticket.id}`,M+100,48);y+=55;
- text(`DATE: ${pad(d.getDate())}/${pad(d.getMonth()+1)}/${String(d.getFullYear()).slice(-2)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,M+100,48);y+=55;
- text(`SERIAL: ${ticket.id}`,M+100,48);y+=125;
- center(ticket.id,94);
+ text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,W/2,48,"middle");y+=60;
+ text(`Ticket: ${ticket.id}`,M,46);y+=55;
+ text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`,M,46);y+=65;
+ center(ticket.id,72);
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
  const bars=code.encodings?.map(e=>e.data).join("")||"";
