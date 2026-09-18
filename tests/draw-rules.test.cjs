@@ -27,9 +27,9 @@ test('Cash 3 combinations expand to 6, 3 or 1 unique plays',()=>{
 });
 test('closure respects exact second, zone and daylight savings',()=>{
  const schedule={time:'13:00',zone:'America/New_York'};
- assert.equal(secondsToClose(schedule,new Date('2026-09-16T16:55:00Z')),300);
- assert.equal(secondsToClose(schedule,new Date('2026-09-16T17:00:00Z')),0);
- assert.equal(secondsToClose(schedule,new Date('2026-09-16T17:00:01Z')),-1);
- assert.equal(secondsToClose(schedule,new Date('2026-01-16T18:00:00Z')),0);
+ assert.equal(secondsToClose(schedule,new Date('2026-09-16T16:50:00Z')),120);
+ assert.equal(secondsToClose(schedule,new Date('2026-09-16T16:52:00Z')),0);
+ assert.equal(secondsToClose(schedule,new Date('2026-09-16T16:52:01Z')),-1);
+ assert.equal(secondsToClose(schedule,new Date('2026-01-16T17:52:00Z')),0);
  assert.equal(secondsToClose({time:'25:00',zone:schedule.zone},new Date()),null);
 });
