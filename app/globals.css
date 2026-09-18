@@ -435,3 +435,33 @@
  .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:46px;font-size:25px}
  .pos-layout-option2 .play-columns{height:calc(100dvh - 292px)}
 }
+
+/* GesPro V2 exact-fit pass: preserve existing V2 UI, only fit it into desktop viewport. */
+@media (min-width:1024px){
+ .pos-layout-option2{height:100dvh;min-height:100dvh;overflow:hidden;padding:0}
+ .pos-layout-option2 .pos-topbar{height:50px;min-height:50px}
+ .pos-layout-option2 .lottery-navigation,.pos-layout-option2 .lottery-strip{height:64px;min-height:64px}
+ .pos-layout-option2 .lottery-strip{padding:0}
+ .pos-layout-option2 .lottery-strip>button{height:64px;min-height:64px}
+ .pos-layout-option2 .desktop-lottery-actions{height:58px;padding:5px 22px;box-sizing:border-box}
+ .pos-layout-option2 .desktop-lottery-actions button,.pos-layout-option2 .desktop-lottery-actions:before{min-height:44px;height:44px}
+ .pos-layout-option2 .ticket-toolbar{margin:0;padding:8px 20px 6px;min-height:116px;box-sizing:border-box}
+ .pos-layout-option2 .entry-controls{grid-template-columns:1fr 1fr 1fr;gap:18px;align-items:center}
+ .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:46px}
+ .pos-layout-option2 .ticket-summary{min-height:40px;padding:2px 0;margin:0}
+ .pos-layout-option2 .mobile-entry-add{display:none!important}
+ .pos-layout-option2 .play-columns{margin:0;padding:0 16px 8px;gap:12px;height:calc(100dvh - 288px);min-height:280px;overflow:hidden;align-items:stretch}
+ .pos-layout-option2 .play-card{height:100%;min-height:0}
+ .pos-layout-option2 .play-card>header{height:46px;min-height:46px}
+ .pos-layout-option2 .play-table{min-height:0;overflow:auto}
+ .pos-layout-option2 .category-total{height:46px!important;min-height:46px!important;flex:0 0 46px}
+}
+@media (min-width:1024px) and (max-height:720px){
+ .pos-layout-option2 .pos-topbar{height:46px;min-height:46px}
+ .pos-layout-option2 .lottery-navigation,.pos-layout-option2 .lottery-strip,.pos-layout-option2 .lottery-strip>button{height:56px;min-height:56px}
+ .pos-layout-option2 .desktop-lottery-actions{height:50px;padding:3px 18px}
+ .pos-layout-option2 .desktop-lottery-actions button,.pos-layout-option2 .desktop-lottery-actions:before{height:40px;min-height:40px}
+ .pos-layout-option2 .ticket-toolbar{min-height:102px;padding:5px 16px 4px}
+ .pos-layout-option2 .entry-controls input,.pos-layout-option2 .mobile-game-kind{height:42px}
+ .pos-layout-option2 .play-columns{height:calc(100dvh - 254px);min-height:250px}
+}
