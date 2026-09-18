@@ -21,7 +21,7 @@ export function DrawResults({state,onChange}:{state:LotteryState;onChange:(s:Lot
    const r=await fetch("/api/gespro/lottery-result?lotteryId="+encodeURIComponent(lottery)+"&date="+encodeURIComponent(date),{cache:"no-store"});
    const data=await r.json() as {error?:string;primary?:string;gameName?:string;drawDate?:string};
    if(!r.ok||!data.primary){setMessage(data.error||"Rezilta API a pa disponib.");return}
-   if(isPick2)setValues([data.primary,"",""]);else setValues(old=>[data.primary,old[1]??"",old[2]??""]);
+   const primary=data.primary;if(!primary){setMessage(data.error||"Rezilta API a pa disponib.");return}\n   if(isPick2)setValues([primary,"",""]);else setValues(old=>[primary,old[1]??"",old[2]??""]);
    setMessage(isPick2?`API konekte • ${data.gameName||item.name} • ${data.drawDate||date}. Verifye epi sove rezilta a.`:`API konekte • ${data.gameName||item.name} • premye nimewo a chaje. Dezyèm ak twazyèm boul yo rete pou verifye/antre manyèlman.`);
   }catch{setMessage("Nou pa ka konekte ak API tiraj la kounye a.")}finally{setApiBusy(false)}
  }
