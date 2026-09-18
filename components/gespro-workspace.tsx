@@ -115,7 +115,11 @@ function AdminDashboard({ setView, tickets, onCancel, lotteryState, setLotterySt
   const [open,setOpen] = useState(false);
   const [supportOwner,setSupportOwner] = useState<Owner|null>(null);
   const [backend,setBackend] = useState<{configured:boolean;urlConfigured:boolean;anonKeyConfigured:boolean;serviceRoleConfigured:boolean}|null>(null);
-  useEffect(()=>{void fetch("/api/gespro/schedule-notifications",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(v=>{if(v&&typeof v.unread==="number"){setScheduleUnread(v.unread);setScheduleNotices(Array.isArray(v.notifications)?v.notifications:[])}}).catch(()=>{})},[]);
+  type ScheduleNotice={id:number;lottery_name:string;old_draw_time:string|null;new_draw_time:string;old_cutoff_time:string|null;new_cutoff_time:string;detected_at:string;acknowledged_at:string|null};
+  const [scheduleUnread,setScheduleUnread]=useState(0);
+  const [scheduleNotices,setScheduleNotices]=useState<ScheduleNotice[]>([]);
+  const [scheduleOpen,setScheduleOpen]=useState(false);
+  useEffect(()=>{void fetch("/api/gespro/schedule-notifications",{cache:"no-store"}).then(async r=>r.ok?await r.json() as {unread:number;notifications:ScheduleNotice[]}:null).then(v=>{if(v&&typeof v.unread==="number"){setScheduleUnread(v.unread);setScheduleNotices(Array.isArray(v.notifications)?v.notifications:[])}}).catch(()=>{})},[]);
   useEffect(()=>{void fetch("/api/backend-status",{cache:"no-store"}).then((response)=>response.json()).then(value=>{if(value && typeof value === "object" && "configured" in value)setBackend(value as NonNullable<typeof backend>)}).catch(()=>setBackend(null))},[]);
   function addOwner() {
     if (!ownerName.trim() || !lotteryName.trim()) return;
