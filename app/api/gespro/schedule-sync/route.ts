@@ -9,7 +9,7 @@ export async function POST(request:Request){
  const newCutoff=cutoff(body.drawTime);if(!newCutoff)return Response.json({error:"Lè tiraj la pa valab."},{status:400,headers});
  const oldCutoff=body.oldDrawTime?cutoff(body.oldDrawTime):null;if(body.oldDrawTime===body.drawTime)return Response.json({updated:false,newCutoff},{headers});
  const {url,key}=authConfig();
- const r=await fetch(url+"/rest/v1/gespro_schedule_change_log",{method:"POST",headers:{apikey:key,Authorization:"Bearer "+key,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({lottery_id:body.lotteryId,lottery_name:body.lotteryName,old_draw_time:body.oldDrawTime||null,new_draw_time:body.drawTime,old_cutoff_time:oldCutoff,new_cutoff_time:newCutoff,provider:"rapidapi"}),cache:"no-store"});
+ const r=await fetch(url+"/rest/v1/rpc/gespro_apply_schedule_change",{method:"POST",headers:{apikey:key,Authorization:"Bearer "+key,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({target_lottery:body.lotteryId,target_lottery_name:body.lotteryName,old_draw:body.oldDrawTime||null,new_draw:body.drawTime,target_zone:"America/New_York"}),cache:"no-store"});
  if(!r.ok)return Response.json({error:"Chanjman orè a pa ka anrejistre."},{status:503,headers});
  return Response.json({updated:true,newDrawTime:body.drawTime,newCutoff},{headers});
 }
