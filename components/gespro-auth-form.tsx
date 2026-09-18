@@ -28,7 +28,7 @@ export function GesproAuthForm({setup=false}:{setup?:boolean}) {
       const responseError=body && typeof body==="object" && "error" in body && typeof body.error==="string" ? body.error : null;
       if(!response.ok){setError(responseError||"Nou pa kapab konekte kounye a.");return;}
       setPassword("");setConfirmation("");setToken("");
-      window.location.assign(setup?"/login?activated=1":"/access");
+      window.location.assign(setup?"/login?activated=1":space==="seller"?"/pos":"/access");
     }catch{setError("Verifye koneksyon entènèt ou epi eseye ankò.");}finally{submitting.current=false;setBusy(false);}
   }
   const shell={minHeight:"100dvh",display:"grid",placeItems:"center",padding:"24px",background:"radial-gradient(circle at 50% 25%,#edf4fb 0,#dfe9f4 42%,#ccd8e6 100%)",color:"#102a47"} as const;
