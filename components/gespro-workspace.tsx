@@ -335,7 +335,7 @@ export function PosInterface({ setView, tickets, setTickets, lotteryState, ident
     }
     setAction(label);
   }
-  return <main className="pos-shell" onKeyDownCapture={event=>{
+  return <main className={`pos-shell pos-layout-${posLayout}` } onKeyDownCapture={event=>{
     if(!event.currentTarget.contains(event.target as Node)||(event.target as HTMLElement).closest('[role="dialog"]')||monitorOpen||action||event.nativeEvent.isComposing)return;
     if(event.key!=="*"){firstStar.current=null;return}
     event.preventDefault();
