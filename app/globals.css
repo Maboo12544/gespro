@@ -376,3 +376,8 @@
 
 /* Hide per-column total footer when layout option doesn't show totals. */
 .play-columns .play-card[data-show-total="false"] .category-total{display:none}
+
+/* Admin readability and primary save action. */
+.access-super .access-content,.access-super .access-content label,.access-super .access-content p,.access-super .access-content span,.access-super .access-content button,.access-super .access-content th,.access-super .access-content td,.access-super .access-content summary{font-weight:700}
+.admin-save-button{background:#078c9f!important;color:#fff!important;border-color:#078c9f!important;font-weight:800!important;min-width:120px}
+.admin-save-button:disabled{opacity:.55}
