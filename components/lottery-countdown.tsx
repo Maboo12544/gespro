@@ -10,5 +10,6 @@ export function LotteryCountdown({schedule,serverOffsetMs=0}:{schedule?:ClosingS
  useEffect(()=>{if(!schedule)return;setNow(new Date(Date.now()+serverOffsetMs));const id=setInterval(()=>setNow(new Date(Date.now()+serverOffsetMs)),1000);return()=>clearInterval(id)},[schedule,serverOffsetMs]);
  const remaining=schedule?secondsToClose(schedule,now):null;
  const soon=remaining!==null&&remaining>0&&remaining<=600;
- return <small className={"lottery-close-time"+(soon||remaining!==null&&remaining<=0?" closing-soon":"")} title={schedule?`${schedule.zone} — vant fèmen 8 minit anvan tiraj`:"Mete lè fèmti nan Admin → Lotri"}>{remaining===null?"Lè fèmti: —":remaining<=0?`Fèmen · ${schedule!.time}`:`Fèmen nan ${String(Math.floor(remaining/60)).padStart(2,"0")}:${String(remaining%60).padStart(2,"0")}`}</small>
+ const cutoff=schedule?(()=>{const [h,m]=schedule.time.split(":").map(Number);const total=(h*60+m-8+1440)%1440;return `${String(Math.floor(total/60)).padStart(2,"0")}:${String(total%60).padStart(2,"0")}`})():null;
+ return <small className={"lottery-close-time"+(soon||remaining!==null&&remaining<=0?" closing-soon":"")} title={schedule?`${schedule.zone} — vant fèmen 8 minit anvan tiraj`:"Mete lè fèmti nan Admin → Lotri"}>{remaining===null?"Cutoff: —":remaining<=0?`Fèmen · cutoff ${cutoff}`:`Cutoff ${cutoff} · ${String(Math.floor(remaining/60)).padStart(2,"0")}:${String(remaining%60).padStart(2,"0")}`}</small>
 }
