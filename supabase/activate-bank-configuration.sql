@@ -39,7 +39,7 @@ begin
   if schedule is null or coalesce(schedule->>'time','') !~ '^([01][0-9]|2[0-3]):[0-5][0-9]$' then raise exception 'Closing time not configured';end if;
   zone=schedule->>'zone';
   if zone is null or zone not in ('America/Santo_Domingo','America/New_York','America/Port-au-Prince','America/Chicago') then raise exception 'Invalid closing timezone';end if;
-  if (stamp at time zone zone)::time >= (schedule->>'time')::time then raise exception 'Lottery closed';end if;
+  if (stamp at time zone zone)::time >= ((schedule->>'time')::time - interval '8 minutes') then raise exception 'Lottery closed';end if;
   day_index=extract(isodow from stamp at time zone zone)::integer-1;
   day_start=date_trunc('day',stamp at time zone zone) at time zone zone;day_end=(date_trunc('day',stamp at time zone zone)+interval '1 day') at time zone zone;
   game=case when kind in ('DIRECTO','REVÈ','BOUL PÈ') then 'Directo' when kind='PALÉ' then 'Palé' when kind='TRIPLETA' then 'Tripleta' else initcap(replace(kind,'PICK 5','PICK 5')) end;
@@ -57,7 +57,7 @@ begin
   applied=applied||jsonb_build_array(jsonb_build_object('lotteryId',item->>'id','lottery',item->>'name','mode',mode,'schedule',schedule));
  end loop;
  for item in select value from jsonb_array_elements(applied) loop
-  if (clock_timestamp() at time zone (item->'schedule'->>'zone'))::time >= (item->'schedule'->>'time')::time then raise exception 'Lottery closed';end if;
+  if (clock_timestamp() at time zone (item->'schedule'->>'zone'))::time >= ((item->'schedule'->>'time')::time - interval '8 minutes') then raise exception 'Lottery closed';end if;
  end loop;
  insert into public.gespro_test_tickets(request_id,bank_id,pos_id,seller_id,seller_name,bank_name,pos_name,created_at,cancel_until,amount_cents,plays,configuration_snapshot)
  values(request_key,p.bank_id,p.id,actor,(select coalesce(nullif(display_name,''),username) from public.gespro_profiles where user_id=actor),(select name from public.gespro_banks where id=p.bank_id),p.name,stamp,stamp+interval '5 minutes',total,canonical,jsonb_build_object('version',cfg_version,'lotteries',applied,'rates',cfg->'rates')) returning * into t;
