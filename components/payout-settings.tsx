@@ -21,14 +21,14 @@ export const payoutRows = [
   { label: "Pick3 Back", value: 0, group: "Pick3 Back" },
 ];
 export type PayoutRates = Record<string, string>;
-export const defaultPayoutRates = (): PayoutRates => Object.fromEntries(payoutRows.map(row => [row.label, row.value.toFixed(2)]));
+export const defaultPayoutRates = (): PayoutRates => ({});
 
 export function PayoutSettings({ bank, rates, onSave, dominican=false }: { bank: string; rates: PayoutRates; dominican?:boolean; onSave: (rates: PayoutRates) => void }) {
   const rows=dominican?payoutRows.filter(row=>["Bòlèt","Palé","Tripleta"].includes(row.group)):payoutRows;
-  const [draft, setDraft] = useState(() => ({ ...defaultPayoutRates(), ...rates }));
+  const [draft, setDraft] = useState(() => ({ ...rates }));
   const [query, setQuery] = useState("");
   const [message, setMessage] = useState("");
-  const dirty = rows.some(row => draft[row.label] !== rates[row.label]);
+  const dirty = rows.some(row => (draft[row.label]??"") !== (rates[row.label]??""));
   const valid = (value: string) => /^\d+(\.\d{1,2})?$/.test(value) && Number.isFinite(Number(value));
   function change(label: string, value: string) { setDraft(items => ({ ...items, [label]: value })); setMessage(""); }
   function groupApply(group: string, value: string) {
@@ -37,8 +37,8 @@ export function PayoutSettings({ bank, rates, onSave, dominican=false }: { bank:
     setMessage("Valè a kopye sou tout liy gwoup " + group + " la. Valide pou kenbe li.");
   }
   function save() {
-    if (rows.some(row => !valid(draft[row.label]))) { setMessage("Verifye tarif yo: pa kite chan vid, negatif oswa plis pase 2 desimal."); return; }
-    const normalized = {...rates,...Object.fromEntries(rows.map(row => [row.label, Number(draft[row.label]).toFixed(2)]))};
+    if (rows.some(row => !valid(draft[row.label]??""))) { setMessage("Verifye tarif yo: pa kite chan vid, negatif oswa plis pase 2 desimal."); return; }
+    const normalized = {...rates,...Object.fromEntries(rows.map(row => [row.label, Number(draft[row.label]??"").toFixed(2)]))};
     setDraft(normalized); onSave(normalized); setMessage("Tarif yo valide pou " + bank + ". Anrejistre konfigirasyon bank la pou sove sou sèvè a.");
   }
   return <section className="panel payout-panel">
@@ -48,12 +48,12 @@ export function PayoutSettings({ bank, rates, onSave, dominican=false }: { bank:
     <div className="table-scroll"><table className="payout-table"><thead><tr><th scope="col"><Localized text={"Kalite jwèt"}/></th><th scope="col">Aplike pa gwoup</th><th scope="col">Valè peman</th></tr></thead><tbody>
       {rows.filter(row => row.label.toLowerCase().includes(query.toLowerCase())).map(row => <tr key={row.label}>
         <th scope="row">{row.label}</th>
-        <td>{["Palé", "Pick3 Box", "Pick4 Box", "Pick5 Box"].includes(row.group) && payoutRows.find(item => item.group === row.group)?.label === row.label && <Button variant="outline" type="button" onClick={() => groupApply(row.group, draft[row.label])}>Pou gwoup la</Button>}</td>
-        <td><Input aria-label={"Tarif " + row.label} inputMode="decimal" value={draft[row.label]} aria-invalid={!valid(draft[row.label])} onChange={event => change(row.label, event.target.value)} /></td>
+        <td>{["Palé", "Pick3 Box", "Pick4 Box", "Pick5 Box"].includes(row.group) && payoutRows.find(item => item.group === row.group)?.label === row.label && <Button variant="outline" type="button" onClick={() => groupApply(row.group, draft[row.label]??"")}>Pou gwoup la</Button>}</td>
+        <td><Input aria-label={"Tarif " + row.label} inputMode="decimal" value={draft[row.label]??""} aria-invalid={!valid(draft[row.label])} onChange={event => change(row.label, event.target.value)} /></td>
       </tr>)}
     </tbody></table></div>
     {!payoutRows.some(row => row.label.toLowerCase().includes(query.toLowerCase())) && <p className="payout-note">Pa gen kalite jwèt ki koresponn.</p>}
-    <footer className="payout-footer"><span>{dirty ? "Chanjman poko valide" : "Pa gen chanjman annatant"}</span><Button variant="outline" disabled={!dirty} onClick={() => { setDraft({ ...defaultPayoutRates(), ...rates }); setMessage(""); }}><Localized text={"Anile chanjman"}/></Button><Button className="primary-action" disabled={!dirty} onClick={save}><Localized text={"Valide tarif yo"}/></Button></footer>
+    <footer className="payout-footer"><span>{dirty ? "Chanjman poko valide" : "Pa gen chanjman annatant"}</span><Button variant="outline" disabled={!dirty} onClick={() => { setDraft({ ...rates }); setMessage(""); }}><Localized text={"Anile chanjman"}/></Button><Button className="primary-action" disabled={!dirty} onClick={save}><Localized text={"Valide tarif yo"}/></Button></footer>
     {message && <p className="payout-note" role="status">{message}</p>}
   </section>;
 }
