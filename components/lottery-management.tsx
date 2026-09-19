@@ -9,7 +9,7 @@ import {PayoutSettings,defaultPayoutRates,type PayoutRates} from "@/components/p
 import type {BankManagement} from "@/components/bank-administration";
 import {AlertDialog,AlertDialogContent,AlertDialogHeader,AlertDialogTitle,AlertDialogDescription,AlertDialogFooter,AlertDialogCancel,AlertDialogAction} from "@/components/ui/alert-dialog";
 export type LotteryItem={resultMode?:"pick2"|"massachusetts4"|"dominican3"|"pending";id:string;name:string;bank:string|null};
-export type LotteryState={closingTimes?:Record<string,import("@/components/lottery-countdown").ClosingSchedule>;results?:import("@/components/draw-results").DrawResult[];items:LotteryItem[];removed:Record<string,boolean>;rates:Record<string,PayoutRates>;limits?:LotteryLimit[];posLayout?:import("@/components/desktop-model-previews").PosLayout};
+export type LotteryState={closingTimes?:Record<string,import("@/components/lottery-countdown").ClosingSchedule>;results?:import("@/components/draw-results").DrawResult[];items:LotteryItem[];removed:Record<string,boolean>;rates:Record<string,PayoutRates>;limits?:LotteryLimit[];posLayout?:import("@/components/desktop-model-previews").PosLayout;ticketModel?:"model1"|"model2"};
 export const initialLotteryState:LotteryState={items:[...["FL PICK 2 AM","FLORIDA AM","NEW YORK AM","GEORGIA EVENING","FL PICK 2 PM","FLORIDA PM","GEORGIA MIDDAY","NEW YORK PM"].map((name,i)=>({id:"lottery-"+i,name,bank:null})),{id:"lottery-ma-even",name:"MASSACHUSETTS EVENING",bank:null,resultMode:"massachusetts4"} as LotteryItem],removed:{},rates:{}};
 const rateKey=(lottery:string,bank:string,scope:string)=>JSON.stringify([lottery,bank,scope]);
 export function resolveLotteryRates(state:LotteryState,lottery:string,bank:string,scope:string,supervisorId?:string){
