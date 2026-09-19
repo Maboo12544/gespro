@@ -16,7 +16,7 @@ const usesLegacyBarcode=(model:TicketModel)=>model==="model1";
 export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const cached=artworkCache.get(ticket)?.get(copy);
  if(cached)return cached;
- let y=54;const parts:string[]=[];
+ let y=92;const parts:string[]=[];
  const text=(value:string,x:number,size:number,anchor="start",italic=false,heavy=false)=>parts.push(`<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}"${italic?' font-style="italic"':''}${heavy?' font-family="Impact, Arial Black, DejaVu Sans Condensed, sans-serif" font-weight="900"':''}>${escape(value)}</text>`);
  const center=(value:string,size=54,heavy=false)=>{text(value,W/2,size,"middle",false,heavy);y+=size+24};
  const rule=()=>{text("================================",W/2,46,"middle");y+=64};
@@ -27,7 +27,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,52,"middle",false,true);y+=60;
  text(`Ticket: ${ticket.id}`,M,50);y+=55;
  text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,50);y+=55;
- const serial=(ticket as MonitoredTicket&{serial?:string}).serial||ticket.id;wrap(serial,46);center(ticket.id,76,true);
+ const serial=(ticket as MonitoredTicket&{serial?:string}).serial;if(serial&&serial!==ticket.id)wrap(serial,46);center(ticket.id,76,true);
  // Model 2 keeps the compact supplied thermal hierarchy; barcode remains omitted from the top block.
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
