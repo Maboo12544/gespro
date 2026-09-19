@@ -161,7 +161,7 @@ export function PosInterface({ setView, tickets, setTickets, lotteryState, ident
   const [monitorOpen,setMonitorOpen] = useState(false);
   const configuredLotteries=useMemo(()=>lotteryState.items.filter(i=>i.resultMode!=="pending"&&(!i.bank||i.bank===posBank)&&!lotteryState.removed[JSON.stringify([i.id,"*","removed"])]&&!lotteryState.removed[JSON.stringify([i.id,posBank,"removed"])]),[lotteryState.items,lotteryState.removed,posBank]);
   const [clockNow,setClockNow]=useState(()=>new Date(Date.now()+serverOffsetMs));
-  useEffect(()=>{const id=setInterval(()=>setClockNow(new Date(Date.now()+serverOffsetMs)),1000);return()=>clearInterval(id)},[serverOffsetMs]);
+  useEffect(()=>{let id:ReturnType<typeof setInterval>|null=null;const tick=()=>setClockNow(new Date(Date.now()+serverOffsetMs));const start=()=>{if(id===null)id=setInterval(tick,1000)};const stop=()=>{if(id!==null){clearInterval(id);id=null}};const visibility=()=>document.hidden?stop():(tick(),start());visibility();document.addEventListener("visibilitychange",visibility);return()=>{stop();document.removeEventListener("visibilitychange",visibility)}},[serverOffsetMs]);
   const activeLotteries=useMemo(()=>configuredLotteries.filter(i=>{const schedule=lotteryState.closingTimes?.[JSON.stringify([i.id,posBank,"closing"])]??lotteryState.closingTimes?.[JSON.stringify([i.id,"*","closing"])];const remaining=schedule?.time?secondsToClose(schedule,clockNow):null;return remaining===null||remaining>0}),[configuredLotteries,lotteryState.closingTimes,posBank,clockNow]);
   const [action,setAction]=useState("");
   const [duplicateCode,setDuplicateCode]=useState("");
