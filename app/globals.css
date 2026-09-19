@@ -531,3 +531,12 @@
 .lottery-region{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;font-weight:900;background:#eaf3f8;color:#123b5d}
 .region-fl{background:#eaf4ff;color:#076bd8}.region-ny{background:#fff1e6;color:#c65a00}.region-ga{background:#f3ebff;color:#6932c9}.region-ma{background:#eaf8ef;color:#18864b}.region-rd{background:#eef2ff;color:#263b99}
 @media(max-width:700px){.lottery-select-grid{grid-template-columns:1fr!important}.lottery-select-card{min-height:68px}}
+
+.lottery-config-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.lottery-config-tabs button{min-height:48px;font-weight:850;font-size:1rem}
+.lottery-save-row{align-items:stretch}
+.lottery-save-row .admin-save-button{min-height:48px;flex:1;font-weight:900}
+.lottery-payout{background:#fff;border:1px solid #dbe7ef;border-radius:14px;padding:18px}
+.lottery-payout .bank-context{background:#f8fbfd;border:1px solid #e1ebf1;border-radius:12px;padding:14px}
+.lottery-payout h3{font-weight:900;color:#102a43}
+@media(max-width:700px){.lottery-config-tabs{grid-template-columns:1fr}.lottery-payout{padding:12px}.lottery-save-row>*{width:100%}}
