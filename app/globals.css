@@ -483,3 +483,14 @@
   min-height:240px;
  }
 }
+
+/* Light, readable Admin surface — preserve structure, improve visual comfort. */
+.access-super{background:#eef5f9!important;color:#102a43}
+.access-super .access-content{background:#f7fbfd!important;color:#102a43}
+.access-super .access-content>section,.access-super .access-content .admin-card,.access-super .access-content .bank-context,.access-super .access-content .lottery-management,.access-super .access-content .lottery-payout,.access-super .access-content .bank-entity-editor{background:#fff!important;border:1px solid #d8e7ef!important;border-radius:12px;box-shadow:0 3px 12px #16324f12}
+.access-super .access-content h1,.access-super .access-content h2,.access-super .access-content h3,.access-super .access-content h4,.access-super .access-content label,.access-super .access-content th,.access-super .access-content summary{color:#102a43!important;font-weight:800!important}
+.access-super .access-content p,.access-super .access-content td,.access-super .access-content span{color:#294861;font-weight:650}
+.access-super .access-content input,.access-super .access-content select,.access-super .access-content textarea{background:#fff!important;color:#102a43!important;border:1px solid #bfd3df!important;border-radius:8px}
+.access-super .access-content .bank-table{background:#fff;border-radius:10px;overflow:hidden}
+.access-super .access-content .bank-table th{background:#eaf3f8!important}
+.access-super .access-content .primary-action,.access-super .access-content .admin-save-button{display:inline-flex!important;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;border-radius:8px!important;box-shadow:0 2px 7px #0b789a24;font-weight:850!important}
