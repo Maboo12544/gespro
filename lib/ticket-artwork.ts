@@ -8,6 +8,8 @@ const playLabel=(p:TicketPlay)=>p.number+(p.type.endsWith("STRAIGHT")?"Str":p.ty
 type Artwork={width:number;height:number;svg:string;url?:string};
 // Ticket state is updated immutably. Weak keys release receipts when no longer used.
 const artworkCache=new WeakMap<MonitoredTicket,Map<boolean,Artwork>>();
+// Active print template: supplied Model 2 thermal layout. Model 1 remains available as the alternate source style.
+export const ACTIVE_TICKET_MODEL="model2" as const;
 export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const cached=artworkCache.get(ticket)?.get(copy);
  if(cached)return cached;
@@ -23,12 +25,11 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  text(`Ticket: ${ticket.id}`,M,46);y+=55;
  text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,46);y+=55;
  center(ticket.id,72);
+ // Model 2 keeps the compact supplied thermal hierarchy; barcode remains omitted from the top block.
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
  const bars=code.encodings?.map(e=>e.data).join("")||"";
- const barWidth=790/bars.length,left=(W-790)/2;
- for(let i=0;i<bars.length;i++)if(bars[i]==="1")parts.push(`<rect x="${left+i*barWidth}" y="${y-12}" width="${barWidth+.05}" height="180"/>`);
- y+=215;center(ticket.id,54);rule();
+ if(ACTIVE_TICKET_MODEL==="model1"){const barWidth=790/bars.length,left=(W-790)/2;for(let i=0;i<bars.length;i++)if(bars[i]==="1")parts.push(`<rect x="${left+i*barWidth}" y="${y-12}" width="${barWidth+.05}" height="180"/>`);y+=215;center(ticket.id,54);}rule();
  for(const lottery of [...new Set(ticket.plays.map(p=>p.lottery))]){
   const plays=ticket.plays.filter(p=>p.lottery===lottery);
   wrap(`${lottery}: ${amount(plays.reduce((sum,p)=>sum+Math.round(p.amount*100),0)/100)}`,54);rule();
