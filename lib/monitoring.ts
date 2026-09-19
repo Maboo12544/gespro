@@ -5,7 +5,7 @@ export type MonitoredTicket = {
   bank?: string; pointOfSaleId?: string; agentCode?: string;
   id: string; createdAt: number; seller: string; amount: number; prize: number;
   status: "pending" | "winner" | "loser" | "cancelled"; paidAt?: number; paidBy?: string;
-  cancelledAt?: number; cancelledBy?: string; cancelUntil: number; plays: TicketPlay[];
+  cancelledAt?: number; cancelledBy?: string; cancelUntil: number; plays: TicketPlay[]; payoutSnapshot?:Record<string,unknown>;
 };
 export const ticketDate = (time: number) => {
   const date = new Date(time);
