@@ -43,7 +43,7 @@ export function PayoutSettings({ bank, rates, onSave, dominican=false }: { bank:
   }
   return <section className="panel payout-panel">
     <div className="panel-title"><div><p className="eyebrow">KONFIGIRASYON BANK • {bank}</p><h2><Localized text={"Peman pa kalite jwèt"}/></h2></div><span className="status valide">Tarif bank la</span></div>
-    <p className="payout-note">Valè depa dapre modèl ou a. Valide tarif yo isit la, epi anrejistre konfigirasyon bank la nan espas bank konekte a. Kalkil pri ak peman otomatik poko aktive.</p>
+    <p className="payout-note">Tarif sa yo se payout bank lan. Valide yo isit la epi anrejistre konfigirasyon bank la pou tikè ak peman yo itilize tarif bank lan.</p>
     <label className="payout-search">Chèche kalite jwèt<Input value={query} onChange={event => setQuery(event.target.value)} placeholder="Chèche..." /></label>
     <div className="table-scroll"><table className="payout-table"><thead><tr><th scope="col"><Localized text={"Kalite jwèt"}/></th><th scope="col">Aplike pa gwoup</th><th scope="col">Valè peman</th></tr></thead><tbody>
       {rows.filter(row => row.label.toLowerCase().includes(query.toLowerCase())).map(row => <tr key={row.label}>
