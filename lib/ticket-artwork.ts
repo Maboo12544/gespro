@@ -11,6 +11,8 @@ type Artwork={width:number;height:number;svg:string;url?:string};
 const artworkCache=new WeakMap<MonitoredTicket,Map<boolean,Artwork>>();
 // Active print template: supplied Model 2 thermal layout. Model 1 remains available as the alternate source style.
 export type TicketModel="model1"|"model2";
+// Both approved receipt models are intentionally retained. Model 2 is active; Model 1 is the saved alternate.
+export const SAVED_TICKET_MODELS:readonly TicketModel[]=["model1","model2"];
 export const ACTIVE_TICKET_MODEL:TicketModel="model2";
 const usesLegacyBarcode=(model:TicketModel)=>model==="model1";
 export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
