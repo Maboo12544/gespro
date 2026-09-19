@@ -315,7 +315,7 @@ export function PosInterface({ setView, tickets, setTickets, lotteryState, ident
   function addPlay(amountOverride=amount) {
     const cash=Number(amountOverride);
     if(!number.trim()||!Number.isFinite(cash)||cash<=0){setNotice("Antre yon boul ak yon montan ki valab.");return}
-    if(!multiples&&saleLotteries.length===1&&availableLimit!==null&&cash>availableLimit){setNotice("Limit pa disponib.");return}
+    if(!multiples&&saleLotteries.length===1&&availableLimit!==null&&cash>availableLimit){setNotice("Limit boul la rive. Jwèt la pa ajoute.");return}
     try {
       validateLotteries(saleLotteries);
       const parsed=parsePlayEntry(number);
@@ -341,7 +341,7 @@ export function PosInterface({ setView, tickets, setTickets, lotteryState, ident
     if(!remote){setNotice("Koneksyon sèvè a obligatwa pou kreye tikè.");creatingTicket.current=false;return}
     const submitted=[...plays];setNotice("Ap sove tikè sou sèvè a…");
     try{const ticket=await remote.create(submitted.map(({lottery,number,amount,type})=>({lottery,number,amount,type})));setPlays(items=>items.filter(p=>!submitted.some(old=>old.id===p.id)));setNotice("Tikè la sove sou sèvè a.");setReceiptToPrint(ticket)}
-    catch(error){setNotice(error instanceof Error?error.message:"Tikè a pa konfime. Retrye menm fich la apre koneksyon an retounen.")}
+    catch(error){const message=error instanceof Error?error.message:"Tikè a pa konfime. Retrye menm fich la apre koneksyon an retounen.";setNotice(message);if(message.includes("Pa gen limit aktif")||message.includes("Limit boul la rive")){setNumber("");numberRef.current?.focus()}}
     finally{creatingTicket.current=false}
   }
   function menuAction(label:string){
