@@ -27,7 +27,9 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,52,"middle",false,true);y+=60;
  text(`Ticket: ${ticket.id}`,M,50);y+=55;
  text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,50);y+=76;
- const serial=(ticket as MonitoredTicket&{serial?:string}).serial;if(serial&&serial!==ticket.id){wrap(serial,46);center(ticket.id,76,true);}
+ const serial=(ticket as MonitoredTicket&{serial?:string}).serial;if(serial&&serial!==ticket.id)wrap(serial,46);
+ // Keep a real CODE128 bar directly under the ticket number, using the dynamic ticket id.
+ const headerCode:{encodings?:{data:string}[]}={};JsBarcode(headerCode,ticket.id,{format:"CODE128",displayValue:false,margin:0});const headerBars=headerCode.encodings?.map(e=>e.data).join("")||"";if(headerBars){const bw=760/headerBars.length,left=(W-760)/2;for(let i=0;i<headerBars.length;i++)if(headerBars[i]==="1")parts.push(`<rect x="${left+i*bw}" y="${y}" width="${bw+.05}" height="115"/>`);y+=140;}
  // Model 2 keeps the compact supplied thermal hierarchy; barcode remains omitted from the top block.
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
