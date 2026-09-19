@@ -24,11 +24,11 @@ async function getGame(gameID:number,key:string){
 }
 function nextTime(data:ApiData){const m=/\s(\d{2}):(\d{2}):(\d{2})$/.exec(data.nextDrawDate||"");return m?`${m[1]}:${m[2]}:${m[3]}`:data.drawTime||null}
 async function syncSchedule(request:NextRequest,lotteryId:string,lotteryName:string,data:ApiData){
- if(!AUTO_SYNC_ENABLED)return;
- const drawTime=nextTime(data);if(!drawTime)return;
- const secret=process.env.LOTTERY_SCHEDULE_SYNC_SECRET;if(!secret)return;
+ if(!AUTO_SYNC_ENABLED)return {saved:false,error:"Auto sync OFF"};
+ const drawTime=nextTime(data);if(!drawTime)return {saved:false,error:"Lè pwochen tiraj la manke"};
+ const secret=process.env.LOTTERY_SCHEDULE_SYNC_SECRET;if(!secret)return {saved:false,error:"Sync secret manke"};
  const origin=request.nextUrl.origin;
- await fetch(origin+"/api/gespro/schedule-sync",{method:"POST",headers:{Authorization:"Bearer "+secret,"Content-Type":"application/json"},body:JSON.stringify({lotteryId,lotteryName,drawTime,oldDrawTime:null}),cache:"no-store"}).catch(()=>{});
+ try{const r=await fetch(origin+"/api/gespro/schedule-sync",{method:"POST",headers:{Authorization:"Bearer "+secret,"Content-Type":"application/json"},body:JSON.stringify({lotteryId,lotteryName,drawTime,oldDrawTime:null}),cache:"no-store"});const body=await r.json().catch(()=>({})) as {updated?:boolean;newCutoff?:string;error?:string};return {saved:r.ok&&body.updated===true,drawTime,closingTime:body.newCutoff,error:r.ok?undefined:body.error||"Schedule write failed"}}catch{return {saved:false,drawTime,error:"Schedule write network failed"}}
 }
 function digits(data:ApiData,count:number){const v=(data.winningNumbers??[]).map(String).slice(0,count).join("");return new RegExp("^\\d{"+count+"}$").test(v)?v:null}
 export async function GET(request:NextRequest){
@@ -39,10 +39,10 @@ export async function GET(request:NextRequest){
   const ma=massachusetts[lotteryId];
   if(ma){
    const d=await getGame(ma,key),four=digits(d,4);
-   await syncSchedule(request,lotteryId,d.gameDetails?.gameName||lotteryId,d);
+   const schedule=await syncSchedule(request,lotteryId,d.gameDetails?.gameName||lotteryId,d);
    if(!four)return Response.json({error:"API a pa retounen Massachusetts 4 chif nan fòma ki valab."},{status:502});
    if(expectedDate&&d.drawDate!==expectedDate)return Response.json({error:`Dènye rezilta API a se ${d.drawDate||"yon lòt dat"}, pa ${expectedDate}.`,latestDate:d.drawDate},{status:409});
-   return Response.json({lotteryId,gameID:ma,gameName:d.gameDetails?.gameName,drawDate:d.drawDate,drawTime:d.drawTime,nextDrawDate:d.nextDrawDate,scheduleMode,primary:four,values:[four]});
+   return Response.json({lotteryId,gameID:ma,gameName:d.gameDetails?.gameName,drawDate:d.drawDate,drawTime:d.drawTime,nextDrawDate:d.nextDrawDate,scheduleMode,schedule,primary:four,values:[four]});
   }
   const p2=pick2[lotteryId];
   if(p2){
@@ -50,15 +50,15 @@ export async function GET(request:NextRequest){
    await syncSchedule(request,lotteryId,d.gameDetails?.gameName||lotteryId,d);
    if(!primary)return Response.json({error:"API a pa retounen yon rezilta Pick 2 valab."},{status:502});
    if(expectedDate&&d.drawDate!==expectedDate)return Response.json({error:`Dènye rezilta API a se ${d.drawDate||"yon lòt dat"}, pa ${expectedDate}.`,latestDate:d.drawDate},{status:409});
-   return Response.json({lotteryId,gameID:p2,gameName:d.gameDetails?.gameName,drawDate:d.drawDate,drawTime:d.drawTime,nextDrawDate:d.nextDrawDate,scheduleMode,primary,values:[primary]});
+   return Response.json({lotteryId,gameID:p2,gameName:d.gameDetails?.gameName,drawDate:d.drawDate,drawTime:d.drawTime,nextDrawDate:d.nextDrawDate,scheduleMode,schedule,primary,values:[primary]});
   }
   const game=games[lotteryId];if(!game)return Response.json({error:"Lotri sa a poko konekte ak API a."},{status:400});
   const [d3,d4]=await Promise.all([getGame(game.pick3,key),getGame(game.pick4,key)]);
-  await syncSchedule(request,lotteryId,d3.gameDetails?.gameName||lotteryId,d3);
+  const schedule=await syncSchedule(request,lotteryId,d3.gameDetails?.gameName||lotteryId,d3);
   if(expectedDate&&(d3.drawDate!==expectedDate||d4.drawDate!==expectedDate))return Response.json({error:"Pick 3 ak Pick 4 poko disponib pou dat sa a.",pick3Date:d3.drawDate,pick4Date:d4.drawDate},{status:409});
   if(d3.drawDate!==d4.drawDate)return Response.json({error:"Dat Pick 3 ak Pick 4 yo pa koresponn."},{status:409});
   const primary=digits(d3,3),four=digits(d4,4);
   if(!primary||!four)return Response.json({error:"API a pa retounen Pick 3 / Pick 4 nan fòma ki valab."},{status:502});
-  return Response.json({lotteryId,gameIDs:[game.pick3,game.pick4],gameName:d3.gameDetails?.gameName,drawDate:d3.drawDate,drawTime:d3.drawTime,nextDrawDate:d3.nextDrawDate,scheduleMode,primary,values:[primary,four.slice(0,2),four.slice(2,4)]});
+  return Response.json({lotteryId,gameIDs:[game.pick3,game.pick4],gameName:d3.gameDetails?.gameName,drawDate:d3.drawDate,drawTime:d3.drawTime,nextDrawDate:d3.nextDrawDate,scheduleMode,schedule,primary,values:[primary,four.slice(0,2),four.slice(2,4)]});
  }catch{return Response.json({error:"Nou pa ka konekte ak API tiraj la kounye a."},{status:502})}
 }
