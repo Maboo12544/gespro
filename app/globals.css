@@ -540,3 +540,11 @@
 .lottery-payout .bank-context{background:#f8fbfd;border:1px solid #e1ebf1;border-radius:12px;padding:14px}
 .lottery-payout h3{font-weight:900;color:#102a43}
 @media(max-width:700px){.lottery-config-tabs{grid-template-columns:1fr}.lottery-payout{padding:12px}.lottery-save-row>*{width:100%}}
+
+.draw-settings-card{margin-top:18px;background:#fff;border:1px solid #dbe7ef;border-radius:14px;padding:16px;box-shadow:0 4px 18px rgba(15,50,80,.05)}
+.draw-settings-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.draw-settings-heading>div{display:flex;align-items:center;gap:10px}.draw-settings-heading h3{margin:0;font-size:1.15rem;font-weight:900;color:#102a43}.draw-settings-heading p{margin:0;color:#60758a;font-weight:650}
+.step-badge{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;border-radius:9px;background:#eaf4ff;color:#0877d8;font-weight:950}
+.draw-settings-card input[type=time],.draw-settings-card select{min-height:42px;border:1px solid #cbdce7;border-radius:8px;background:#fff;font-weight:700}
+.draw-settings-card .test-open-control{display:inline-flex;align-items:center;gap:8px;font-weight:800}
+@media(max-width:700px){.draw-settings-card{padding:12px}.draw-settings-card .lottery-actions{display:grid;grid-template-columns:1fr;gap:8px}.draw-settings-card .lottery-actions>*{width:100%}}
