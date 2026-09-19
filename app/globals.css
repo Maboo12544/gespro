@@ -555,3 +555,8 @@
 .schedule-sync-table td:first-child,.schedule-sync-table th:first-child{white-space:normal;min-width:190px}
 .schedule-sync-table .ready{color:#17834b}.schedule-sync-table .pending{color:#b54708}
 @media(max-width:700px){.schedule-sync-table{overflow-x:auto}.schedule-sync-table .bank-table{min-width:620px}}
+
+.bank-server-record{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px;padding:12px 14px;border:1px solid #cfe3d8;border-radius:10px;background:#f4fbf7;color:#173f2b}
+.bank-server-record b{font-weight:900}.bank-server-record span{font-weight:650}
+.access-server-sales{background:#fff;border:1px solid #dbe7ef;border-radius:14px;padding:16px}
+@media(max-width:700px){.bank-server-record{align-items:flex-start}.access-server-sales{padding:12px}}
