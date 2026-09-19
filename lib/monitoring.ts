@@ -1,7 +1,7 @@
 import type { PlayType } from "@/lib/play-entry";
 export type TicketPlay = { lottery: string; number: string; amount: number; type: PlayType };
 export type MonitoredTicket = {
-  storage?: "server"; sellerId?:string; pointOfSaleName?:string;
+  storage?: "server"; sellerId?:string; pointOfSaleName?:string; ticketModel?:"model1"|"model2"; payoutLines?:string[];
   bank?: string; pointOfSaleId?: string; agentCode?: string;
   id: string; createdAt: number; seller: string; amount: number; prize: number;
   status: "pending" | "winner" | "loser" | "cancelled"; paidAt?: number; paidBy?: string;
