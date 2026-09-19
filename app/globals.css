@@ -521,3 +521,13 @@
  .access-super .subscription-card{align-items:stretch}
  .access-super .subscription-card label,.access-super .subscription-card .admin-save-button{flex:1 1 100%;width:100%}
 }
+
+/* Professional lottery selector cards; functional behavior unchanged. */
+.lottery-select-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.lottery-select-card{display:grid!important;grid-template-columns:auto auto 1fr;align-items:center;gap:10px;min-height:76px;padding:12px!important;background:#fff!important;border:1px solid #d7e5ee!important;border-radius:10px!important;cursor:pointer}
+.lottery-select-card.selected{border:2px solid #1687e8!important;background:#f3f9ff!important;box-shadow:0 3px 10px #1687e81c}
+.lottery-select-card b{display:block;color:#102a43;font-weight:850}
+.lottery-select-card small{display:block;margin-top:3px;color:#60758a;font-weight:650}
+.lottery-region{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;font-weight:900;background:#eaf3f8;color:#123b5d}
+.region-fl{background:#eaf4ff;color:#076bd8}.region-ny{background:#fff1e6;color:#c65a00}.region-ga{background:#f3ebff;color:#6932c9}.region-ma{background:#eaf8ef;color:#18864b}.region-rd{background:#eef2ff;color:#263b99}
+@media(max-width:700px){.lottery-select-grid{grid-template-columns:1fr!important}.lottery-select-card{min-height:68px}}
