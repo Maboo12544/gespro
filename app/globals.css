@@ -560,3 +560,11 @@
 .bank-server-record b{font-weight:900}.bank-server-record span{font-weight:650}
 .access-server-sales{background:#fff;border:1px solid #dbe7ef;border-radius:14px;padding:16px}
 @media(max-width:700px){.bank-server-record{align-items:flex-start}.access-server-sales{padding:12px}}
+
+.cash-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+.cash-summary article{background:#f8fbfd;border:1px solid #dbe7ef;border-radius:12px;padding:14px;display:grid;gap:5px}
+.cash-summary span{font-weight:700;color:#60758a}.cash-summary strong{font-size:1.45rem;font-weight:950;color:#102a43}
+.positive{color:#17834b!important}.negative{color:#c62828!important}
+.cash-ledger-details{margin:12px 0;border:1px solid #dbe7ef;border-radius:12px;background:#fff;padding:10px}
+.cash-ledger-details summary{cursor:pointer;font-weight:900;color:#102a43}
+@media(max-width:700px){.cash-summary{grid-template-columns:1fr}.cash-ledger-details .bank-table{min-width:600px}}
