@@ -75,10 +75,10 @@ export function BankAdministration({section,banks,data,onChange,tickets,identity
       </>}
     </>:["Administratè","Sipèvizè"].includes(view)?<>
       <p>{banks.find(item=>item.lottery===bank)?.name} — Mèt Bòlèt</p>
-      <form className="bank-add" onSubmit={event=>{event.preventDefault();add("supervisor")}}><label>Non sipèvizè<Input value={name} onChange={event=>setName(event.target.value)} required/></label><Button type="submit">Ajoute sipèvizè</Button></form>
+      <form className="bank-add" onSubmit={event=>{event.preventDefault();add("supervisor")}}><label>Non sipèvizè<Input value={name} onChange={event=>setName(event.target.value)} required/></label><Button className="admin-save-button" type="submit">Ajoute sipèvizè</Button></form>
       <div className="table-scroll"><table className="bank-table"><thead><tr><th><Localized text={"Sipèvizè"}/></th><th>Pwen vant afekte</th><th>Aksè</th></tr></thead><tbody>{localSupervisors.map(item=><tr key={item.id}><td>{item.name}</td><td>{scopedPoints(data,bank,item.id).map(point=>point.name).join(", ")||"Okenn"}</td><td>Lavant sèlman</td></tr>)}</tbody></table></div>
     </>:view==="Pwen vant"?<>
-      <form className="bank-add" onSubmit={event=>{event.preventDefault();add("point")}}><label>Non pwen vant<Input required value={name} onChange={event=>setName(event.target.value)}/></label><Button type="submit">Ajoute pwen vant</Button></form>
+      <form className="bank-add" onSubmit={event=>{event.preventDefault();add("point")}}><label>Non pwen vant<Input required value={name} onChange={event=>setName(event.target.value)}/></label><Button className="admin-save-button" type="submit">Ajoute pwen vant</Button></form>
       <label className="bank-assign">Afekte pwen vant ak<select value={assignTo} onChange={event=>setAssignTo(event.target.value)}><option value="">Chwazi sipèvizè</option>{localSupervisors.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
       <p>Chak pwen vant gen yon sipèvizè. Yon nouvo afektasyon ranplase ansyen an.</p>
       <div className="bank-point-list">{points.map(point=><label key={point.id}><Checkbox disabled={!assignTo} checked={Boolean(assignTo)&&point.supervisorId===assignTo} onCheckedChange={checked=>assign(point,checked===true)}/><span><b>{point.name}</b><small>{localSupervisors.find(item=>item.id===point.supervisorId)?.name||"Poko afekte"}</small></span></label>)}</div>
