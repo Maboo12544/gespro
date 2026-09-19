@@ -19,7 +19,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  let y=92;const parts:string[]=[];
  const text=(value:string,x:number,size:number,anchor="start",italic=false,heavy=false)=>parts.push(`<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}"${italic?' font-style="italic"':''}${heavy?' font-family="Impact, Arial Black, DejaVu Sans Condensed, sans-serif" font-weight="900"':''}>${escape(value)}</text>`);
  const center=(value:string,size=54,heavy=false)=>{text(value,W/2,size,"middle",false,heavy);y+=size+24};
- const rule=()=>{text("================================",W/2,46,"middle");y+=64};
+ const rule=()=>{text("================================",W/2,52,"middle",false,true);y+=64};
  // Keep names and identifiers real; never copy the sample receipt's serial or payouts.
  const wrap=(value:string,size:number)=>{const max=Math.max(1,Math.floor((W-M*2)/(size*.61)));for(let i=0;i<value.length;i+=max)center(value.slice(i,i+max),size)};
  const posRaw=String(ticket.agentCode||ticket.pointOfSaleName||ticket.pointOfSaleId||ticket.seller);const posNumber=posRaw.replace(/^\s*(?:post|pos|po)\s*/i,"");center(`POST ${posNumber}`,76,true);center(copy?"** COPY **":"** ORIGINAL **",68,true);
