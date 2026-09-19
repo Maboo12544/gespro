@@ -159,10 +159,10 @@ function PosMenu({ onAction }: { onAction: (label:string) => void }) {
 export function PosInterface({ setView, tickets, setTickets, lotteryState, identity, remote, posLayout: layoutProp, serverOffsetMs=0 }: { remote?:{create:(plays:MonitoredTicket["plays"])=>Promise<MonitoredTicket>;cancel:(id:string)=>Promise<boolean>;pay?:(id:string)=>Promise<MonitoredTicket>}; identity?:{bank:string;pointId:string;seller:string}; posLayout?: PosLayout; serverOffsetMs?:number; lotteryState:LotteryState; setView: (v: View) => void; tickets: MonitoredTicket[]; setTickets: React.Dispatch<React.SetStateAction<MonitoredTicket[]>> }) {
   const posBank=identity?.bank??"",posId=identity?.pointId??"",sellerName=identity?.seller??"";
   const [monitorOpen,setMonitorOpen] = useState(false);
-  const configuredLotteries=lotteryState.items.filter(i=>i.resultMode!=="pending"&&(!i.bank||i.bank===posBank)&&!lotteryState.removed[JSON.stringify([i.id,"*","removed"])]&&!lotteryState.removed[JSON.stringify([i.id,posBank,"removed"])]);
+  const configuredLotteries=useMemo(()=>lotteryState.items.filter(i=>i.resultMode!=="pending"&&(!i.bank||i.bank===posBank)&&!lotteryState.removed[JSON.stringify([i.id,"*","removed"])]&&!lotteryState.removed[JSON.stringify([i.id,posBank,"removed"])]),[lotteryState.items,lotteryState.removed,posBank]);
   const [clockNow,setClockNow]=useState(()=>new Date(Date.now()+serverOffsetMs));
   useEffect(()=>{const id=setInterval(()=>setClockNow(new Date(Date.now()+serverOffsetMs)),1000);return()=>clearInterval(id)},[serverOffsetMs]);
-  const activeLotteries=configuredLotteries.filter(i=>{const schedule=lotteryState.closingTimes?.[JSON.stringify([i.id,posBank,"closing"])]??lotteryState.closingTimes?.[JSON.stringify([i.id,"*","closing"])];const remaining=schedule?.time?secondsToClose(schedule,clockNow):null;return remaining===null||remaining>0});
+  const activeLotteries=useMemo(()=>configuredLotteries.filter(i=>{const schedule=lotteryState.closingTimes?.[JSON.stringify([i.id,posBank,"closing"])]??lotteryState.closingTimes?.[JSON.stringify([i.id,"*","closing"])];const remaining=schedule?.time?secondsToClose(schedule,clockNow):null;return remaining===null||remaining>0}),[configuredLotteries,lotteryState.closingTimes,posBank,clockNow]);
   const [action,setAction]=useState("");
   const [duplicateCode,setDuplicateCode]=useState("");
   const [duplicateTicket,setDuplicateTicket]=useState<MonitoredTicket|null>(null);
