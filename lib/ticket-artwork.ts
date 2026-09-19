@@ -22,12 +22,12 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const rule=()=>{text("================================",W/2,46,"middle");y+=64};
  // Keep names and identifiers real; never copy the sample receipt's serial or payouts.
  const wrap=(value:string,size:number)=>{const max=Math.max(1,Math.floor((W-M*2)/(size*.61)));for(let i=0;i<value.length;i+=max)center(value.slice(i,i+max),size)};
- center(`POST ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,76,true);center(copy?"** COPY **":"** ORIGINAL **",68,true);
+ center(`POST ${String(ticket.agentCode||ticket.pointOfSaleId||ticket.seller).replace(/^pos(?:t)?\s*/i,"")}`,76,true);center(copy?"** COPY **":"** ORIGINAL **",68,true);
  const d=new Date(ticket.createdAt),pad=(n:number)=>String(n).padStart(2,"0");
  text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,52,"middle",false,true);y+=60;
  text(`Ticket: ${ticket.id}`,M,50);y+=55;
- text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,50);y+=55;
- const serial=(ticket as MonitoredTicket&{serial?:string}).serial;if(serial&&serial!==ticket.id)wrap(serial,46);center(ticket.id,76,true);
+ text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,50);y+=76;
+ const serial=(ticket as MonitoredTicket&{serial?:string}).serial;if(serial&&serial!==ticket.id){wrap(serial,46);center(ticket.id,76,true);}
  // Model 2 keeps the compact supplied thermal hierarchy; barcode remains omitted from the top block.
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
