@@ -17,17 +17,17 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const cached=artworkCache.get(ticket)?.get(copy);
  if(cached)return cached;
  let y=54;const parts:string[]=[];
- const text=(value:string,x:number,size:number,anchor="start",italic=false)=>parts.push(`<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}"${italic?' font-style="italic"':''}>${escape(value)}</text>`);
- const center=(value:string,size=54)=>{text(value,W/2,size,"middle");y+=size+24};
+ const text=(value:string,x:number,size:number,anchor="start",italic=false,heavy=false)=>parts.push(`<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}"${italic?' font-style="italic"':''}${heavy?' font-family="Impact, Arial Black, DejaVu Sans Condensed, sans-serif" font-weight="900"':''}>${escape(value)}</text>`);
+ const center=(value:string,size=54,heavy=false)=>{text(value,W/2,size,"middle",false,heavy);y+=size+24};
  const rule=()=>{text("================================",W/2,46,"middle");y+=64};
  // Keep names and identifiers real; never copy the sample receipt's serial or payouts.
  const wrap=(value:string,size:number)=>{const max=Math.max(1,Math.floor((W-M*2)/(size*.61)));for(let i=0;i<value.length;i+=max)center(value.slice(i,i+max),size)};
- center(`POST ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,64);center(copy?"** COPY **":"** ORIGINAL **",60);
+ center(`POST ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,76,true);center(copy?"** COPY **":"** ORIGINAL **",68,true);
  const d=new Date(ticket.createdAt),pad=(n:number)=>String(n).padStart(2,"0");
- text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,48,"middle");y+=60;
+ text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,52,"middle",false,true);y+=60;
  text(`Ticket: ${ticket.id}`,M,50);y+=55;
  text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,50);y+=55;
- const serial=(ticket as MonitoredTicket&{serial?:string}).serial||ticket.id;wrap(serial,46);center(ticket.id,72);
+ const serial=(ticket as MonitoredTicket&{serial?:string}).serial||ticket.id;wrap(serial,46);center(ticket.id,76,true);
  // Model 2 keeps the compact supplied thermal hierarchy; barcode remains omitted from the top block.
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
