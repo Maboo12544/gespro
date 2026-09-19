@@ -548,3 +548,10 @@
 .draw-settings-card input[type=time],.draw-settings-card select{min-height:42px;border:1px solid #cbdce7;border-radius:8px;background:#fff;font-weight:700}
 .draw-settings-card .test-open-control{display:inline-flex;align-items:center;gap:8px;font-weight:800}
 @media(max-width:700px){.draw-settings-card{padding:12px}.draw-settings-card .lottery-actions{display:grid;grid-template-columns:1fr;gap:8px}.draw-settings-card .lottery-actions>*{width:100%}}
+
+.schedule-sync-table{margin:0 0 20px;border:1px solid #dbe7ef;border-radius:12px;background:#fff}
+.schedule-sync-table .bank-table{margin:0}
+.schedule-sync-table td,.schedule-sync-table th{white-space:nowrap}
+.schedule-sync-table td:first-child,.schedule-sync-table th:first-child{white-space:normal;min-width:190px}
+.schedule-sync-table .ready{color:#17834b}.schedule-sync-table .pending{color:#b54708}
+@media(max-width:700px){.schedule-sync-table{overflow-x:auto}.schedule-sync-table .bank-table{min-width:620px}}
