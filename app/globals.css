@@ -494,3 +494,30 @@
 .access-super .access-content .bank-table{background:#fff;border-radius:10px;overflow:hidden}
 .access-super .access-content .bank-table th{background:#eaf3f8!important}
 .access-super .access-content .primary-action,.access-super .access-content .admin-save-button{display:inline-flex!important;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;border-radius:8px!important;box-shadow:0 2px 7px #0b789a24;font-weight:850!important}
+
+/* Responsive Admin: preserve approved layout, adapt cleanly to phone/desktop and long translations. */
+.access-super .access-content,.access-super .access-content *{min-width:0}
+.access-super .access-content h1,.access-super .access-content h2,.access-super .access-content h3,.access-super .access-content h4,.access-super .access-content p,.access-super .access-content label,.access-super .access-content button,.access-super .access-content span{overflow-wrap:anywhere}
+.access-super .admin-sync-action{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 18px}
+.access-super .admin-sync-action>span{font-weight:800}
+.access-super .subscription-card{display:flex;align-items:end;gap:10px;flex-wrap:wrap}
+.access-super .subscription-card label{flex:1 1 150px}
+.access-super .subscription-card input{width:100%}
+@media (min-width:900px){
+ .access-super .access-content{padding:24px 30px}
+ .access-super .backend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .access-super .owner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .access-super .panel{max-width:none}
+}
+@media (max-width:700px){
+ .access-super .access-content{padding:14px}
+ .access-super .panel{padding:14px}
+ .access-super .panel-title{align-items:flex-start;gap:10px;flex-wrap:wrap}
+ .access-super .backend-grid,.access-super .owner-grid{grid-template-columns:1fr}
+ .access-super .admin-sync-action{align-items:stretch}
+ .access-super .admin-sync-action .admin-save-button{width:100%}
+ .access-super .bank-table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .access-super .bank-table table{min-width:680px}
+ .access-super .subscription-card{align-items:stretch}
+ .access-super .subscription-card label,.access-super .subscription-card .admin-save-button{flex:1 1 100%;width:100%}
+}
