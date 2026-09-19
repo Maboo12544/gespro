@@ -37,11 +37,11 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
   const plays=ticket.plays.filter(p=>p.lottery===lottery);
   wrap(`${lottery}: ${amount(plays.reduce((sum,p)=>sum+Math.round(p.amount*100),0)/100)}`,60);rule();
   const columns=[M+12,330,600,852];
-  ["PLAY","AMOUNT","PLAY","AMOUNT"].forEach((s,i)=>text(s,columns[i],54));y+=80;
+  ["PLAY","AMOUNT","PLAY","AMOUNT"].forEach((s,i)=>text(s,columns[i],54,"start",false,true));y+=80;
   const rows=Math.ceil(plays.length/2);
   // Fill down the left column then down the right, as on the supplied receipt.
   for(let row=0;row<rows;row++){
-   [plays[row],plays[row+rows]].forEach((p,col)=>{if(!p)return;const label=playLabel(p);text(label,columns[col*2],Math.min(58,250/(label.length*.61)));const value=amount(p.amount);text(value,columns[col*2+1],Math.min(58,235/(value.length*.61)));});y+=80;
+   [plays[row],plays[row+rows]].forEach((p,col)=>{if(!p)return;const label=playLabel(p);text(label,columns[col*2],Math.min(58,250/(label.length*.61)),"start",false,true);const value=amount(p.amount);text(value,columns[col*2+1],Math.min(58,235/(value.length*.61)),"start",false,true);});y+=80;
   }
   rule();
  }
@@ -52,7 +52,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  else if(ticket.status==="winner")center("GENYEN — AN ATANT PEMAN",38);
  else if(ticket.status==="loser")center("PÈDI",48);
  y+=10;
- const artwork:Artwork={width:W,height:y,svg:`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${y}" viewBox="0 0 ${W} ${y}"><rect width="100%" height="100%" fill="white"/><g fill="#111" font-family="DejaVu Sans Mono, Courier New, monospace" font-weight="900">${parts.join("")}</g></svg>`};
+ const artwork:Artwork={width:W,height:y,svg:`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${y}" viewBox="0 0 ${W} ${y}"><rect width="100%" height="100%" fill="white"/><g fill="#111" font-family="Arial Narrow, DejaVu Sans Condensed, sans-serif" font-weight="900">${parts.join("")}</g></svg>`};
  const variants=artworkCache.get(ticket)??new Map<boolean,Artwork>();
  variants.set(copy,artwork);artworkCache.set(ticket,variants);return artwork;
 }
