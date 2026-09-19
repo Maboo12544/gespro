@@ -9,7 +9,8 @@ type Artwork={width:number;height:number;svg:string;url?:string};
 // Ticket state is updated immutably. Weak keys release receipts when no longer used.
 const artworkCache=new WeakMap<MonitoredTicket,Map<boolean,Artwork>>();
 // Active print template: supplied Model 2 thermal layout. Model 1 remains available as the alternate source style.
-export const ACTIVE_TICKET_MODEL="model2" as const;
+export type TicketModel="model1"|"model2";
+export const ACTIVE_TICKET_MODEL:TicketModel="model2";
 export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const cached=artworkCache.get(ticket)?.get(copy);
  if(cached)return cached;
