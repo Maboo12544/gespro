@@ -39,7 +39,7 @@ export async function GET(request:NextRequest){
   const ma=massachusetts[lotteryId];
   if(ma){
    const d=await getGame(ma,key),four=digits(d,4);
-   const schedule=await syncSchedule(request,lotteryId,d.gameDetails?.gameName||lotteryId,d);
+   const schedule=const schedule=await syncSchedule(request,lotteryId,d.gameDetails?.gameName||lotteryId,d);
    if(!four)return Response.json({error:"API a pa retounen Massachusetts 4 chif nan fòma ki valab."},{status:502});
    if(expectedDate&&d.drawDate!==expectedDate)return Response.json({error:`Dènye rezilta API a se ${d.drawDate||"yon lòt dat"}, pa ${expectedDate}.`,latestDate:d.drawDate},{status:409});
    return Response.json({lotteryId,gameID:ma,gameName:d.gameDetails?.gameName,drawDate:d.drawDate,drawTime:d.drawTime,nextDrawDate:d.nextDrawDate,scheduleMode,schedule,primary:four,values:[four]});
