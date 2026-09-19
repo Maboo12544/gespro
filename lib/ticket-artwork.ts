@@ -11,6 +11,7 @@ const artworkCache=new WeakMap<MonitoredTicket,Map<boolean,Artwork>>();
 // Active print template: supplied Model 2 thermal layout. Model 1 remains available as the alternate source style.
 export type TicketModel="model1"|"model2";
 export const ACTIVE_TICKET_MODEL:TicketModel="model2";
+const usesLegacyBarcode=(model:TicketModel)=>model==="model1";
 export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const cached=artworkCache.get(ticket)?.get(copy);
  if(cached)return cached;
@@ -30,7 +31,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
  const bars=code.encodings?.map(e=>e.data).join("")||"";
- if(ACTIVE_TICKET_MODEL==="model1"){const barWidth=790/bars.length,left=(W-790)/2;for(let i=0;i<bars.length;i++)if(bars[i]==="1")parts.push(`<rect x="${left+i*barWidth}" y="${y-12}" width="${barWidth+.05}" height="180"/>`);y+=215;center(ticket.id,54);}rule();
+ if(usesLegacyBarcode(ACTIVE_TICKET_MODEL)){const barWidth=790/bars.length,left=(W-790)/2;for(let i=0;i<bars.length;i++)if(bars[i]==="1")parts.push(`<rect x="${left+i*barWidth}" y="${y-12}" width="${barWidth+.05}" height="180"/>`);y+=215;center(ticket.id,54);}rule();
  for(const lottery of [...new Set(ticket.plays.map(p=>p.lottery))]){
   const plays=ticket.plays.filter(p=>p.lottery===lottery);
   wrap(`${lottery}: ${amount(plays.reduce((sum,p)=>sum+Math.round(p.amount*100),0)/100)}`,54);rule();
