@@ -12,7 +12,7 @@ const games:Record<string,Game>={
 const pick2:Record<string,number>={"lottery-0":80,"lottery-4":81};
 const massachusetts:Record<string,number>={"lottery-ma-even":213};
 const host="usa-lottery-result-all-state-api.p.rapidapi.com";
-const AUTO_SYNC_ENABLED=process.env.LOTTERY_SCHEDULE_AUTO_SYNC==="true";
+const autoSyncEnabled=()=>String(process.env.LOTTERY_SCHEDULE_AUTO_SYNC||"").trim().toLowerCase()==="true";
 type ApiData={drawDate?:string;drawTime?:string;nextDrawDate?:string;winningNumbers?:Array<string|number>;gameDetails?:{id?:number;gameName?:string}};
 async function getGame(gameID:number,key:string){
  const url=new URL("https://"+host+"/lottery-results/game-result");url.searchParams.set("gameID",String(gameID));
@@ -24,7 +24,7 @@ async function getGame(gameID:number,key:string){
 }
 function nextTime(data:ApiData){const m=/\s(\d{2}):(\d{2}):(\d{2})$/.exec(data.nextDrawDate||"");return m?`${m[1]}:${m[2]}:${m[3]}`:data.drawTime||null}
 async function syncSchedule(request:NextRequest,lotteryId:string,lotteryName:string,data:ApiData){
- if(!AUTO_SYNC_ENABLED)return {saved:false,error:"Auto sync OFF"};
+ if(!autoSyncEnabled())return {saved:false,error:"Auto sync OFF"};
  const drawTime=nextTime(data);if(!drawTime)return {saved:false,error:"Lè pwochen tiraj la manke"};
  const secret=process.env.LOTTERY_SCHEDULE_SYNC_SECRET;if(!secret)return {saved:false,error:"Sync secret manke"};
  const origin=request.nextUrl.origin;
@@ -33,7 +33,7 @@ async function syncSchedule(request:NextRequest,lotteryId:string,lotteryName:str
 function digits(data:ApiData,count:number){const v=(data.winningNumbers??[]).map(String).slice(0,count).join("");return new RegExp("^\\d{"+count+"}$").test(v)?v:null}
 export async function GET(request:NextRequest){
  const lotteryId=request.nextUrl.searchParams.get("lotteryId")||"",expectedDate=request.nextUrl.searchParams.get("date")||"",key=process.env.RAPIDAPI_LOTTERY_KEY;
- const scheduleMode=AUTO_SYNC_ENABLED?"production-auto":"test-manual";
+ const scheduleMode=autoSyncEnabled()?"production-auto":"test-manual";
  if(!key)return Response.json({error:"RAPIDAPI_LOTTERY_KEY pa konfigire sou sèvè a."},{status:503});
  try{
   const ma=massachusetts[lotteryId];
