@@ -22,6 +22,14 @@ async function getGame(gameID:number,key:string){
  if(body.status!=="success"||!body.data)throw new Error("data");
  return body.data;
 }
+function nextTime(data:ApiData){const m=/\s(\d{2}):(\d{2}):(\d{2})$/.exec(data.nextDrawDate||"");return m?`${m[1]}:${m[2]}:${m[3]}`:data.drawTime||null}
+async function syncSchedule(request:NextRequest,lotteryId:string,lotteryName:string,data:ApiData){
+ if(!AUTO_SYNC_ENABLED)return;
+ const drawTime=nextTime(data);if(!drawTime)return;
+ const secret=process.env.LOTTERY_SCHEDULE_SYNC_SECRET;if(!secret)return;
+ const origin=request.nextUrl.origin;
+ await fetch(origin+"/api/gespro/schedule-sync",{method:"POST",headers:{Authorization:"Bearer "+secret,"Content-Type":"application/json"},body:JSON.stringify({lotteryId,lotteryName,drawTime,oldDrawTime:null}),cache:"no-store"}).catch(()=>{});
+}
 function digits(data:ApiData,count:number){const v=(data.winningNumbers??[]).map(String).slice(0,count).join("");return new RegExp("^\\d{"+count+"}$").test(v)?v:null}
 export async function GET(request:NextRequest){
  const lotteryId=request.nextUrl.searchParams.get("lotteryId")||"",expectedDate=request.nextUrl.searchParams.get("date")||"",key=process.env.RAPIDAPI_LOTTERY_KEY;
@@ -44,6 +52,7 @@ export async function GET(request:NextRequest){
   }
   const game=games[lotteryId];if(!game)return Response.json({error:"Lotri sa a poko konekte ak API a."},{status:400});
   const [d3,d4]=await Promise.all([getGame(game.pick3,key),getGame(game.pick4,key)]);
+  await syncSchedule(request,lotteryId,d3.gameDetails?.gameName||lotteryId,d3);
   if(expectedDate&&(d3.drawDate!==expectedDate||d4.drawDate!==expectedDate))return Response.json({error:"Pick 3 ak Pick 4 poko disponib pou dat sa a.",pick3Date:d3.drawDate,pick4Date:d4.drawDate},{status:409});
   if(d3.drawDate!==d4.drawDate)return Response.json({error:"Dat Pick 3 ak Pick 4 yo pa koresponn."},{status:409});
   const primary=digits(d3,3),four=digits(d4,4);
