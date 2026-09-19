@@ -19,7 +19,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  let y=54;const parts:string[]=[];
  const text=(value:string,x:number,size:number,anchor="start",italic=false)=>parts.push(`<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}"${italic?' font-style="italic"':''}>${escape(value)}</text>`);
  const center=(value:string,size=54)=>{text(value,W/2,size,"middle");y+=size+24};
- const rule=()=>{parts.push(`<path d="M ${M} ${y} H ${W-M} M ${M} ${y+7} H ${W-M}" fill="none" stroke="#111" stroke-width="5" stroke-dasharray="16 3"/>`);y+=64};
+ const rule=()=>{text("================================",W/2,46,"middle");y+=64};
  // Keep names and identifiers real; never copy the sample receipt's serial or payouts.
  const wrap=(value:string,size:number)=>{const max=Math.max(1,Math.floor((W-M*2)/(size*.61)));for(let i=0;i<value.length;i+=max)center(value.slice(i,i+max),size)};
  center(`POST ${ticket.agentCode||ticket.pointOfSaleId||ticket.seller}`,64);center(copy?"** COPY **":"** ORIGINAL **",60);
@@ -27,7 +27,7 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
  text(`${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,W/2,48,"middle");y+=60;
  text(`Ticket: ${ticket.id}`,M,50);y+=55;
  text(`Date: ${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())} ${d.getHours()>=12?"PM":"AM"}`,M,50);y+=55;
- center(ticket.id,72);
+ const serial=(ticket as MonitoredTicket&{serial?:string}).serial||ticket.id;wrap(serial,46);center(ticket.id,72);
  // Model 2 keeps the compact supplied thermal hierarchy; barcode remains omitted from the top block.
  const code:{encodings?:{data:string}[]}={};
  JsBarcode(code,ticket.id,{format:"CODE128",displayValue:false,margin:0});
@@ -45,7 +45,8 @@ export function ticketArtwork(ticket:MonitoredTicket,copy:boolean):Artwork{
   }
   rule();
  }
- center(`TOTAL: ${amount(ticket.amount)}`,78);rule();
+ center(`-- TOTAL: ${amount(ticket.amount)} --`,78);rule();
+ const payout=(ticket as MonitoredTicket&{payoutLines?:string[]}).payoutLines||[];for(const line of payout)wrap(line,40);
  if(ticket.status==="cancelled")center("ANILE",48);
  else if(ticket.paidAt)center("PEYE",48);
  else if(ticket.status==="winner")center("GENYEN — AN ATANT PEMAN",38);
